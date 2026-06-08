@@ -1,0 +1,123 @@
+/* app/routes/dashboard/calendar-pnl.module.css */
+
+.container {
+    padding: 32px;
+    min-height: 100vh;
+
+    background:
+        linear-gradient(
+            to bottom,
+            #f8fbff,
+            #eef6ff
+        );
+
+    color: #1e293b;
+}
+
+.title {
+    font-size: 36px;
+    font-weight: 700;
+
+    margin-bottom: 40px;
+
+    color: #2563eb;
+}
+
+.monthSection {
+    margin-bottom: 50px;
+}
+
+.monthTitle {
+    font-size: 24px;
+    font-weight: 700;
+
+    margin-bottom: 20px;
+
+    color: #334155;
+}
+
+.weekdays {
+    display: grid;
+
+    grid-template-columns:
+        repeat(7, 1fr);
+
+    gap: 12px;
+
+    margin-bottom: 12px;
+}
+
+.weekday {
+    text-align: center;
+
+    font-weight: 600;
+
+    color: #64748b;
+}
+
+.grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(7, 1fr);
+
+    gap: 12px;
+}
+
+.card {
+    min-height: 110px;
+
+    border-radius: 18px;
+
+    padding: 14px;
+
+    background: white;
+
+    border: 1px solid #dbeafe;
+
+    box-shadow:
+        0 4px 12px rgba(37, 99, 235, 0.08);
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.card:hover {
+    transform: translateY(-3px);
+
+    box-shadow:
+        0 10px 24px rgba(37, 99, 235, 0.12);
+}
+
+.date {
+    font-size: 22px;
+
+    font-weight: 700;
+
+    margin-bottom: 10px;
+}
+
+.user {
+    font-size: 14px;
+
+    color: #475569;
+
+    margin-bottom: 8px;
+}
+
+.pnl {
+    font-size: 18px;
+
+    font-weight: 700;
+}
+
+.profit {
+    border-left:
+        5px solid #22c55e;
+}
+
+.loss {
+    border-left:
+        5px solid #ef4444;
+}

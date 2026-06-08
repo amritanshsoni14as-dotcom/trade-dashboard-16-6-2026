@@ -1,0 +1,194 @@
+.page {
+    padding: 2rem;
+
+    min-height: 100vh;
+
+    background:
+        linear-gradient(
+            180deg,
+            #f8fbff 0%,
+            #eef6ff 100%
+        );
+}
+
+.header {
+    margin-bottom: 2rem;
+}
+
+.header h1 {
+    margin: 0;
+
+    color: #1e3a8a;
+
+    font-size: 2.2rem;
+}
+
+.header p {
+    margin-top: 0.5rem;
+
+    color: #3b82f6;
+}
+
+.section {
+    margin-bottom: 3rem;
+}
+
+.sectionTitle {
+    margin-bottom: 1rem;
+
+    color: #1d4ed8;
+
+    font-size: 1.4rem;
+}
+
+.tableWrapper {
+    overflow-x: auto;
+
+    background: white;
+
+    border-radius: 1.25rem;
+
+    border: 1px solid #dbeafe;
+
+    box-shadow:
+        0 8px 20px rgba(59, 130, 246, 0.06);
+}
+
+.table {
+    width: 100%;
+
+    border-collapse: collapse;
+}
+
+.table thead {
+    background: #eff6ff;
+}
+
+.table th {
+    padding: 1rem;
+
+    text-align: left;
+
+    color: #1d4ed8;
+
+    font-size: 0.95rem;
+
+    font-weight: 700;
+
+    border-bottom: 1px solid #dbeafe;
+}
+
+.table td {
+    padding: 1rem;
+
+    border-bottom: 1px solid #eff6ff;
+
+    color: #334155;
+}
+
+.table tbody tr:hover {
+    background: #f8fbff;
+}
+
+.empty {
+    padding: 1rem;
+
+    background: white;
+
+    border-radius: 1rem;
+
+    border: 1px dashed #bfdbfe;
+
+    color: #64748b;
+}
+
+
+.squareOffBtn {
+    border: none;
+    padding: 0.6rem 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    background: #2563eb;
+    color: white;
+    font-weight: 600;
+}
+
+.squareOffBtn:hover {
+    background: #1d4ed8;
+}
+
+.dialog {
+    border: none;
+    border-radius: 16px;
+    padding: 1.5rem;
+    width: 320px;
+}
+
+.dialog::backdrop {
+    background: rgba(0, 0, 0, 0.45);
+}
+
+.field {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 1rem;
+}
+
+.field input {
+    padding: 0.7rem;
+    border-radius: 8px;
+    border: 1px solid #cbd5e1;
+}
+
+.dialogActions {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+}
+
+
+.totalPnlBox {
+    border: 4px double #333;
+    padding: 20px;
+    margin: 20px 0 30px 0;
+    text-align: center;
+    background: #0f0f0f10;
+    border-radius: 8px;
+}
+
+.totalPnlLabel {
+    font-size: 14px;
+    letter-spacing: 1px;
+    opacity: 0.7;
+    margin-bottom: 10px;
+}
+
+.totalPnlValue {
+    font-size: 32px;
+    font-weight: 700;
+}
+
+.topStatsRow {
+    display: flex;
+    gap: 20px;
+    width: 100%;
+}
+
+.topStatsRow > div {
+    flex: 1; /* 👈 makes both boxes equal width */
+    width: 100%;
+}
+
+.table {
+    font-size: 15px;
+}
+
+.table th {
+    font-size: 20px;
+    font-weight: 600;
+    opacity: 0.8;
+}
+
+.table td {
+    font-size: 20px;
+}

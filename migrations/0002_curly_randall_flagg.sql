@@ -1,0 +1,1 @@
+ALTER TABLE "positions" ADD COLUMN "exchange_instrument_id" bigint NOT NULL;

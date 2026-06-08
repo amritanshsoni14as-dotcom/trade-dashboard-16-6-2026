@@ -1,0 +1,125 @@
+.container {
+    padding: 24px;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.title {
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 20px;
+}
+
+/* =========================
+   CREATE USER FORM
+========================= */
+
+.form {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    padding: 16px;
+    border: 2px solid #333;
+    border-radius: 10px;
+    background: #0f0f0f08;
+    margin-bottom: 20px;
+}
+
+.form input,
+.form select {
+    padding: 10px 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 14px;
+    min-width: 180px;
+}
+
+.form button {
+    padding: 10px 16px;
+    border: none;
+    border-radius: 6px;
+    background: black;
+    color: white;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.form button:hover {
+    opacity: 0.85;
+}
+
+/* =========================
+   USERS LIST
+========================= */
+
+.list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.userRow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background: white;
+}
+
+.userInfo {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    font-size: 15px;
+}
+
+.userId {
+    opacity: 0.6;
+    font-weight: 500;
+}
+
+.username {
+    font-weight: 600;
+}
+
+.role {
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 13px;
+    background: #f0f0f0;
+}
+
+/* role colors */
+.roleAdmin {
+    background: #ffe5e5;
+    color: #b30000;
+}
+
+.roleParticipant {
+    background: #e8f3ff;
+    color: #004a99;
+}
+
+/* delete button */
+.deleteBtn {
+    padding: 8px 12px;
+    border: none;
+    border-radius: 6px;
+    background: #ff3b3b;
+    color: white;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.deleteBtn:hover {
+    background: #d60000;
+}
+
+hr {
+    margin: 20px 0;
+    border: none;
+    border-top: 1px solid #ddd;
+}
