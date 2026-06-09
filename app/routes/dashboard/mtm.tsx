@@ -29,6 +29,26 @@ export async function loader({
     return data;
 }
 
+
+
+
+function formatDateIndian(
+    dateString?: string | null
+) {
+
+    if (!dateString) {
+        return "-";
+    }
+
+    const date =
+        new Date(dateString);
+
+    return date.toLocaleDateString(
+        "en-GB"
+    );
+}
+
+
 /* =========================
    COMPONENT
 ========================= */
@@ -129,7 +149,7 @@ export default function MTM({
                                     ₹{position.pnl.toFixed(2)}
                                 </td>
 
-                                <td>{position.expiry ?? "-"}</td>
+                                <td>{formatDateIndian(position.expiry)}</td>
 
                                 <td>
                                     {position.source === "EXIT" ? "Closed" : "Open"}
@@ -189,7 +209,7 @@ export default function MTM({
                                     ₹{position.pnl.toFixed(2)}
                                 </td>
 
-                                <td>{position.expiry ?? "-"}</td>
+                                <td>{formatDateIndian(position.expiry)}</td>
 
                                 <td>
                                     {position.source === "EXIT" ? "Closed" : "Open"}
