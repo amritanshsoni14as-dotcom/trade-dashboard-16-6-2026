@@ -267,6 +267,25 @@ export async function action({
     };
 }
 
+function formatIndianNumber(num) {
+    const [
+        integerPart,
+        decimalPart
+    ] = num.toString().split(".");
+
+    const lastThree = integerPart.slice(-3);
+    const otherNumbers = integerPart.slice(0, -3);
+
+    const formatted =
+        otherNumbers
+            ? otherNumbers.replace(/\B(?=(\d{2})+(?!\d))/g, ",") + "," + lastThree
+            : lastThree;
+
+    return decimalPart
+        ? `${formatted}.${decimalPart}`
+        : formatted;
+}
+
 export default function TradesPage({
     loaderData
 }: any) {
@@ -412,7 +431,7 @@ AUTO REFRESH
                         color: intraday_data.totalPnL >= 0 ? "green" : "red"
                     }}>
                         {/* same value for now */}
-                        {intraday_data.totalPnL.toFixed(2)}
+                        {formatIndianNumber(intraday_data.totalPnL.toFixed(2))}
                     </div>
                 </div>
             </div>
@@ -428,7 +447,7 @@ AUTO REFRESH
                         color: openPnL >= 0 ? "green" : "red"
                     }}
                 >
-                    ₹ {openPnL.toFixed(2)}
+                    ₹ {formatIndianNumber(openPnL.toFixed(2))}
                 </div>
             </div>
 
@@ -833,7 +852,7 @@ AUTO REFRESH
                         color: totalPnL >= 0 ? "green" : "red"
                     }}
                 >
-                    ₹ {totalPnL.toFixed(2)}
+                    ₹ {formatIndianNumber(totalPnL.toFixed(2))}
                 </div>
             </div>
             <section className={styles.section}>

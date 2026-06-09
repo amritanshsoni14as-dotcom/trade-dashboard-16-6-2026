@@ -29,12 +29,26 @@ export async function loader({
     return data;
 }
 
+function formatIndianNumber(num) {
+    const [
+        integerPart,
+        decimalPart
+    ] = num.toString().split(".");
 
+    const lastThree = integerPart.slice(-3);
+    const otherNumbers = integerPart.slice(0, -3);
 
+    const formatted =
+        otherNumbers
+            ? otherNumbers.replace(/\B(?=(\d{2})+(?!\d))/g, ",") + "," + lastThree
+            : lastThree;
 
-function formatDateIndian(
-    dateString?: string | null
-) {
+    return decimalPart
+        ? `${formatted}.${decimalPart}`
+        : formatted;
+}
+
+function formatDateIndian(dateString?: string | null) {
 
     if (!dateString) {
         return "-";
@@ -43,11 +57,8 @@ function formatDateIndian(
     const date =
         new Date(dateString);
 
-    return date.toLocaleDateString(
-        "en-GB"
-    );
+    return date.toLocaleDateString("en-GB");
 }
-
 
 /* =========================
    COMPONENT
@@ -102,7 +113,7 @@ export default function MTM({
                             : styles.loss
                     }`}
                 >
-                    ₹ {totalPnL.toFixed(2)}
+                    ₹ {formatIndianNumber(totalPnL.toFixed(2))}
                 </div>
             </div>
 
@@ -146,7 +157,7 @@ export default function MTM({
                                         position.pnl >= 0 ? styles.profit : styles.loss
                                     }
                                 >
-                                    ₹{position.pnl.toFixed(2)}
+                                    ₹{formatIndianNumber(position.pnl.toFixed(2))}
                                 </td>
 
                                 <td>{formatDateIndian(position.expiry)}</td>
@@ -206,7 +217,7 @@ export default function MTM({
                                         position.pnl >= 0 ? styles.profit : styles.loss
                                     }
                                 >
-                                    ₹{position.pnl.toFixed(2)}
+                                    ₹{formatIndianNumber(position.pnl.toFixed(2))}
                                 </td>
 
                                 <td>{formatDateIndian(position.expiry)}</td>
