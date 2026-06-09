@@ -150,6 +150,9 @@ export async function action({
     const exitPrice =
         Number(formData.get("exitPrice"));
 
+    const actionType =
+        String(formData.get("actionType"));
+
     /*
     =========================
     FETCH POSITION
@@ -179,6 +182,80 @@ export async function action({
         position.userId !== currentUser.id
     ) {
         throw new Error("Unauthorized");
+    }
+
+    /*
+=========================
+AVERAGE
+=========================
+*/
+
+    if (actionType === "AVERAGE") {
+
+        const newQuantity =
+            position.quantity + lots;
+
+        const previousAverage =
+            Number(position.averagePrice);
+
+        const newAverage =
+            (
+                (
+                    previousAverage *
+                position.quantity
+                ) +
+            (
+                exitPrice *
+                lots
+            )
+            ) / newQuantity;
+
+        await db
+            .update(positions)
+            .set({
+
+                quantity:
+                newQuantity,
+
+                averagePrice:
+                newAverage.toFixed(2),
+
+                currentPrice:
+                exitPrice.toFixed(2)
+
+            })
+            .where(eq(
+                positions.id,
+                position.id
+            ));
+
+        await db
+            .insert(trades)
+            .values({
+
+                positionId:
+                position.id,
+
+                userId:
+                currentUser.id,
+
+                tradeType:
+                "ADD",
+
+                quantity:
+                lots,
+
+                price:
+                exitPrice.toFixed(2),
+
+                notes:
+                `Average ${lots}`
+
+            });
+
+        return {
+            success: true
+        };
     }
 
     /*
@@ -556,7 +633,7 @@ AUTO REFRESH
                                                     ).showModal();
                                                 }}
                                             >
-                                                Square Off
+                                                Edit
                                             </button>
 
                                             <dialog
@@ -573,8 +650,26 @@ AUTO REFRESH
                                                     />
 
                                                     <h3>
-                                                        Square Off
+                                                        Edit
                                                     </h3>
+                                                    <div className={styles.field}>
+                                                        <label>
+                                                            Action
+                                                        </label>
+
+                                                        <select
+                                                            name="actionType"
+                                                            required
+                                                        >
+                                                            <option value="EXIT">
+                                                                Exit
+                                                            </option>
+
+                                                            <option value="AVERAGE">
+                                                                Average
+                                                            </option>
+                                                        </select>
+                                                    </div>
 
                                                     <div
                                                         className={styles.field}
@@ -598,7 +693,7 @@ AUTO REFRESH
                                                         className={styles.field}
                                                     >
                                                         <label>
-                                                            Exit Price
+                                                            Price
                                                         </label>
 
                                                         <input
@@ -750,7 +845,7 @@ AUTO REFRESH
                                                     ).showModal();
                                                 }}
                                             >
-                                                Square Off
+                                                Edit
                                             </button>
 
                                             <dialog
@@ -767,8 +862,26 @@ AUTO REFRESH
                                                     />
 
                                                     <h3>
-                                                        Square Off
+                                                        Edit
                                                     </h3>
+                                                    <div className={styles.field}>
+                                                        <label>
+                                                            Action
+                                                        </label>
+
+                                                        <select
+                                                            name="actionType"
+                                                            required
+                                                        >
+                                                            <option value="EXIT">
+                                                                Exit
+                                                            </option>
+
+                                                            <option value="AVERAGE">
+                                                                Average
+                                                            </option>
+                                                        </select>
+                                                    </div>
 
                                                     <div
                                                         className={styles.field}
@@ -792,7 +905,7 @@ AUTO REFRESH
                                                         className={styles.field}
                                                     >
                                                         <label>
-                                                            Exit Price
+                                                            Price
                                                         </label>
 
                                                         <input
