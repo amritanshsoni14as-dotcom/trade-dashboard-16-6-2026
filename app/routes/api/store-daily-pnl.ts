@@ -10,10 +10,9 @@ import {
     db
 } from "~/database/db.server";
 
-// import {
-//     users,
-//     dailyPnls
-// } from "~/database/schema.server";
+import {
+    dailyPnls
+} from "~/database/schema.server";
 
 import {
     calculatePnLForUser,

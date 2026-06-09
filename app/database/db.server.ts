@@ -7,7 +7,7 @@ import {
 import {
     config
 } from "dotenv";
-import * as schema from "./schema.server";
+import * as schema from "./schema.server.ts";
 config({
     path: ".env"
 });

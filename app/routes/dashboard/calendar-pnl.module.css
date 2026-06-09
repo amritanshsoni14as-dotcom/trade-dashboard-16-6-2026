@@ -121,3 +121,67 @@
     border-left:
         5px solid #ef4444;
 }
+
+.monthTabs {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+}
+
+.monthBtn {
+    border: none;
+    padding: 8px 14px;
+    border-radius: 10px;
+    background: #222;
+    color: #fff;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.monthBtn:hover {
+    background: #333;
+}
+
+.activeMonthBtn {
+    border: none;
+    padding: 8px 14px;
+    border-radius: 10px;
+    background: #2563eb;
+    color: white;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+
+.monthPnlBoxProfit,
+.monthPnlBoxLoss {
+    margin-bottom: 24px;
+    padding: 24px;
+    border-radius: 18px;
+    border: 4px double;
+    text-align: center;
+}
+
+.monthPnlBoxProfit {
+    border-color: #16a34a;
+    background: rgba(22, 163, 74, 0.08);
+}
+
+.monthPnlBoxLoss {
+    border-color: #dc2626;
+    background: rgba(220, 38, 38, 0.08);
+}
+
+.monthPnlLabel {
+    font-size: 14px;
+    opacity: 0.7;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.monthPnlValue {
+    font-size: 42px;
+    font-weight: 800;
+}

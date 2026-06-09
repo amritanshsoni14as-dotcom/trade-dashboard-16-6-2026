@@ -205,11 +205,11 @@ function computeUpdatedPosition(
     };
 }
 
-export async function addTrade(request: Request): Promise<ActionResult | Response> {
+export async function addTrade(request: Request, formData: any): Promise<ActionResult | Response> {
     const user = await requireUser(request);
 
     const currentUserId = user.id;
-    const formData = await request.formData();
+    // const formData = await request.formData();
 
     const data = parseTradeForm(formData);
 

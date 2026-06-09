@@ -1,5 +1,8 @@
 // app/routes/dashboard/calendar-pnl.tsx
-
+import {
+    eq,
+    sql
+} from "drizzle-orm";
 import type {
     Route 
 } from "./+types/calendar-pnl";
@@ -8,6 +11,12 @@ import {
     db 
 } from "~/database/db.server";
 import styles from "./calendar-pnl.module.css";
+import {
+    useState 
+} from "react";
+// import {
+//     positions, trades 
+// } from "~/database/schema.server";
 
 /* =========================
    LOADER
@@ -25,8 +34,74 @@ export async function loader() {
         ]
     });
 
+    const exitTrades = await db.query.trades.findMany({
+        where: (table, {
+            eq 
+        }) => eq(table.tradeType, "EXIT"),
+        with: {
+            user: true,
+            position: true
+        },
+        orderBy: (table, {
+            desc 
+        }) => [
+            desc(table.createdAt)
+        ]
+    });
+
+    const exitTradesWithPnL = exitTrades.map((trade: any) => {
+        const position = trade.position;
+
+        const avgPrice = Number(position.averagePrice);
+        const exitPrice = Number(trade.price);
+        const qty = Number(trade.quantity);
+        const lotSize = Number(position.lotSize || 1);
+
+        let pnl = 0;
+
+        if (position.positionType === "LONG") {
+            pnl = (exitPrice - avgPrice) * qty * lotSize;
+        } else {
+            pnl = (avgPrice - exitPrice) * qty * lotSize;
+        }
+
+        return {
+            ...trade,
+            pnl: Number(pnl.toFixed(2)),
+            avgPrice,
+            exitPrice,
+            qty,
+            lotSize
+        };
+    });
+
+    const monthlyPnlsMap =
+        new Map<string, number>();
+
+    for (const trade of exitTradesWithPnL) {
+        const expiry =
+            trade.position?.expiry;
+
+        if (!expiry) continue;
+
+        const d =
+            new Date(`${expiry}T00:00:00`);
+
+        const key =
+            `${d.getFullYear()}-${d.getMonth()}`;
+
+        const existing =
+            monthlyPnlsMap.get(key) ?? 0;
+
+        monthlyPnlsMap.set(
+            key,
+            existing + trade.pnl
+        );
+    }
+
     return {
-        rows 
+        rows,
+        monthlyPnls: Object.fromEntries(monthlyPnlsMap)
     };
 }
 
@@ -54,9 +129,10 @@ export default function CalendarPnL({
     loaderData
 }: Route.ComponentProps) {
     const {
-        rows 
+        rows,
+        monthlyPnls 
     } = loaderData;
-
+    console.log(monthlyPnls);
     const weekdays = [
         "Sun",
         "Mon",
@@ -68,10 +144,14 @@ export default function CalendarPnL({
     ];
 
     const now = new Date();
+    const [
+        selectedDate,
+        setSelectedDate
+    ] = useState(new Date());
     const {
         year, monthIndex, daysInMonth, firstDay 
     } =
-        getMonthRange(now);
+        getMonthRange(selectedDate);
 
     /* =========================
        BUILD PNL MAP (FAST LOOKUP)
@@ -94,6 +174,38 @@ export default function CalendarPnL({
             username: row.user?.username
         });
     }
+    /* =========================
+       BUILD MONTH LIST
+    ========================= */
+
+    const months: {
+        year: number;
+        monthIndex: number;
+    }[] = [
+    ];
+
+    let yeary = new Date().getFullYear();
+    for (let monthIndex = 0; monthIndex < 12; monthIndex++) {
+        months.push({
+            year: yeary,
+            monthIndex
+        });
+    }
+
+    months.sort((a, b) => {
+        const aValue =
+            a.year * 12 + a.monthIndex;
+
+        const bValue =
+            b.year * 12 + b.monthIndex;
+
+        return aValue - bValue;
+    });
+    const selectedMonthKey =
+        `${year}-${monthIndex}`;
+
+    const selectedMonthPnl =
+        Number(monthlyPnls[selectedMonthKey] ?? 0);
 
     return (
         <div className={styles.container}>
@@ -101,11 +213,62 @@ export default function CalendarPnL({
 
             <section className={styles.monthSection}>
                 <h2 className={styles.monthTitle}>
-                    {now.toLocaleString("en-IN", {
+                    {selectedDate.toLocaleString("en-IN", {
                         month: "long",
                         year: "numeric"
                     })}
                 </h2>
+                <div className={styles.monthTabs}>
+                    {months.map((month) => {
+                        const isActive =
+                            month.monthIndex === selectedDate.getMonth()
+            &&
+            month.year === selectedDate.getFullYear();
+
+                        return (
+                            <button
+                                key={`${month.year}-${month.monthIndex}`}
+                                type="button"
+                                onClick={() =>
+                                    setSelectedDate(new Date(
+                                        month.year,
+                                        month.monthIndex,
+                                        1
+                                    ))
+                                }
+                                className={
+                                    isActive
+                                        ? styles.activeMonthBtn
+                                        : styles.monthBtn
+                                }
+                            >
+                                {new Date(
+                                    month.year,
+                                    month.monthIndex
+                                ).toLocaleString("en-IN", {
+                                    month: "short",
+                                    year: "numeric"
+                                })}
+                            </button>
+                        );
+                    })}
+                </div>
+
+                <div
+                    className={
+                        selectedMonthPnl >= 0
+                            ? styles.monthPnlBoxProfit
+                            : styles.monthPnlBoxLoss
+                    }
+                >
+                    <div className={styles.monthPnlLabel}>
+                        Monthly Expiry PnL
+                    </div>
+
+                    <div className={styles.monthPnlValue}>
+                        ₹ {selectedMonthPnl.toFixed(0)}
+                    </div>
+                </div>
 
                 {/* Weekdays */}
                 <div className={styles.weekdays}>
@@ -151,9 +314,9 @@ export default function CalendarPnL({
                                     {day}
                                 </div>
 
-                                <div className={styles.user}>
+                                {/* <div className={styles.user}>
                                     {data?.username ?? "-"}
-                                </div>
+                                </div> */}
 
                                 <div className={styles.pnl}>
                                     ₹ {pnl.toFixed(0)}

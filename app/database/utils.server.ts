@@ -111,7 +111,6 @@ async function getInstrumentDetails({
     if (!response.ok) {
         throw new Error(`HTTP Error: ${response.status}`);
     }
-
     const data = await response.json();
     const result = data?.result?.[0];
 

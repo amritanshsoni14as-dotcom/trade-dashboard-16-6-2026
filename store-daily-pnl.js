@@ -9,7 +9,7 @@ PREVENT MULTIPLE RUNS
 =========================
 */
 
-let lastRunDate = null;
+// let lastRunDate = null;
 
 /*
 =========================
@@ -24,8 +24,18 @@ async function storeDailyPnL() {
         const response =
             await fetch(BASE_URL);
 
+        if (!response.ok) {
+
+            const text =
+                await response.text();
+
+            throw new Error(text);
+        }
+
         const data =
             await response.json();
+
+
 
         console.log(
             `[${new Date().toLocaleTimeString()}]`,
@@ -48,12 +58,6 @@ SCHEDULER
 */
 
 async function scheduler() {
-
-    /*
-    =========================
-    IST TIME
-    =========================
-    */
 
     const now =
         new Date();
@@ -79,44 +83,21 @@ async function scheduler() {
             }
         ).format(now);
 
-    /*
-    =========================
-    IST DATE
-    =========================
-    */
-
-    const istDate =
-        new Intl.DateTimeFormat(
-            "en-CA",
-            {
-                timeZone:
-                    "Asia/Kolkata"
-            }
-        ).format(now);
-
-    /*
-    =========================
-    PARSE TIME
-    =========================
-    */
-
     const [
-        hour,
-        minute
+        hour
     ] = istTime
         .split(":")
         .map(Number);
 
     /*
     =========================
-    RUN AT 4:00 PM IST
+    RUN AFTER 4 PM
     =========================
     */
 
     if (
-        hour === 16 &&
-        minute === 0 &&
-        lastRunDate !== istDate
+        hour >= 16 &&
+        hour < 17
     ) {
 
         console.log(
@@ -124,11 +105,10 @@ async function scheduler() {
         );
 
         await storeDailyPnL();
-
-        lastRunDate =
-            istDate;
     }
 }
+
+
 
 /*
 =========================
@@ -148,6 +128,6 @@ CHECK EVERY 30 SEC
 
 setInterval(
     scheduler,
-    30000
+    10000
 );
 

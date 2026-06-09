@@ -59,7 +59,7 @@ export async function action({
             values
         };
     }
-    return addTrade(request);
+    return addTrade(request, formData);
 }
 
 export default function AddTradePage() {
