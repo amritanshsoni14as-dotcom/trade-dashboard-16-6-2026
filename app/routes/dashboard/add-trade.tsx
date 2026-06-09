@@ -17,6 +17,48 @@ import styles from "./add-trade.module.css";
 export async function action({
     request 
 }: any) {
+    const formData = await request.formData();
+
+    const values = {
+        exchange:
+            formData.get("exchange")?.toString(),
+
+        instrument_type:
+            formData
+                .get("instrument_type")
+                ?.toString(),
+
+        quantity:
+            formData.get("quantity")?.toString()
+    };
+
+    const errors: Record<string, string> = {
+    };
+
+    if (!values.exchange) {
+        errors.exchange =
+            "Exchange is required";
+    }
+
+    if (!values.instrument_type) {
+        errors.instrumentType =
+            "Instrument type is required";
+    }
+
+    if (
+        !values.quantity ||
+        Number(values.quantity) <= 0
+    ) {
+        errors.quantity =
+            "Quantity must be greater than 0";
+    }
+
+    if (Object.keys(errors).length) {
+        return {
+            errors,
+            values
+        };
+    }
     return addTrade(request);
 }
 
@@ -270,12 +312,11 @@ export default function AddTradePage() {
 
                 {/* Quantity */}
                 <div className={styles.field}>
-                    <label>Quantity</label>
+                    <label>Number of Lots</label>
 
                     <input
                         type="number"
                         name="quantity"
-                        placeholder="10"
                         defaultValue={values.quantity}
                         className={
                             errors.quantity
@@ -299,7 +340,6 @@ export default function AddTradePage() {
                         type="number"
                         step="0.01"
                         name="entry_price"
-                        placeholder="2500"
                         defaultValue={
                             values.entry_price
                         }
