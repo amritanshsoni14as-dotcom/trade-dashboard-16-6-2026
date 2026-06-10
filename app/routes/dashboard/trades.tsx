@@ -1011,7 +1011,7 @@ AUTO REFRESH
                                         t.pnl >= 0 ? "green" : "red"
                                             }}
                                         >
-                                            ₹{t.pnl.toFixed(2)}
+                                            ₹{formatIndianNumber(t.pnl.toFixed(2))}
                                         </td>
 
                                         <td>
@@ -1084,7 +1084,7 @@ AUTO REFRESH
                                         t.pnl >= 0 ? "green" : "red"
                                             }}
                                         >
-                                            ₹{t.pnl.toFixed(2)}
+                                            ₹{formatIndianNumber(t.pnl.toFixed(2))}
                                         </td>
 
                                         <td>
