@@ -188,24 +188,24 @@ export async function updateSettledPrices(token: string) {
 export async function updatePreviousSettledPrices(token: string) {
 
     const rows =
-    await db.query.positions.findMany({
-        where: and(
-            inArray(
-                positions.instrumentType,
-                [
-                    "OPTIONS",
-                    "FUTURE"
-                ]
-            ),
+        await db.query.positions.findMany({
+            where: and(
+                inArray(
+                    positions.instrumentType,
+                    [
+                        "OPTIONS",
+                        "FUTURE"
+                    ]
+                ),
 
-            isNotNull(positions.expiry),
+                isNotNull(positions.expiry),
 
-            gt(
-                positions.expiry,
-                new Date()
+                gt(
+                    positions.expiry,
+                    new Date()
+                )
             )
-        )
-    });
+        });
 
     for (const position of rows) {
 
