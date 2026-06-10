@@ -43,7 +43,7 @@ export async function loader() {
     /*
     =========================
     MORNING
-    9:00 AM IST
+    9:00 AM IST to 12:00 PM IST
     =========================
     */
 
@@ -63,13 +63,13 @@ export async function loader() {
     /*
     =========================
     EVENING
-    4:30 PM IST
+    4:00 PM IST to 8:00 PM
     =========================
     */
 
     if (
-        totalMinutes >= 990 &&
-        totalMinutes <= 1020
+        totalMinutes >= 960 &&
+        totalMinutes <= 1200
     ) {
 
         await updateSettledPrices(await doALogin());
