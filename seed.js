@@ -2,7 +2,7 @@ import { db } from "./app/database/db.server.ts";
 import { positions, trades } from "./app/database/schema.server.ts";
 import { eq, sql } from "drizzle-orm";
 
-const EXPIRY_DATE = "2026-04-30";
+const EXPIRY_DATE = "2026-05-27";
 
 const instrumentMap = {
     BEL: { lotSize: 1425, exchangeInstrumentId: 1425 },
@@ -126,7 +126,7 @@ export async function importTrades(userId, rawData) {
          * EXIT
          * =========================
          */
-        if (exitQty && exitQty < 0) {
+        if (exitQty && exitQty > 0) {
             const closeQty = Math.min(exitQty, s.quantity);
 
             s.quantity -= closeQty;
@@ -154,12 +154,21 @@ export async function importTrades(userId, rawData) {
 /**
  * TEST DATA
  */
-const rawData = `
-BEL	30.03.2026	280	402.45	28.04.2026	-280	434.36
-BHEL	30.03.2026	216	249.16	28.04.2026	-216	350.95
-PNB	30.03.2026	193	102.1	28.04.2026	-193	111.32
-SAIL	30.03.2026	227	154.92	30.03.2026	-227	185.17
-NTPC	30.03.2026	171	370.7	28.04.2026	-256	405.87
+const rawData = `BEL	28.04.2026	280	436.63	26.05.2026	280	420.55
+						
+						
+BHEL	28.04.2026	216	353.39	26.05.2026	216	416.19
+						
+						
+PNB	28.04.2026	266	110.3	28.04.2026	266	105.97
+						
+						
+						
+SAIL	28.04.2026	222	186.9	26.05.2026	222	202.46
+						
+						
+						
+NTPC	28.04.2026	320	404.86	26.05.2026	320	389.5
 `;
 
 await importTrades(1, rawData);

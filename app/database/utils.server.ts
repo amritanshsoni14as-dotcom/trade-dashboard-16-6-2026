@@ -178,6 +178,11 @@ async function calculatePnL(request: Request) {
     const currentUser =
         await requireUser(request);
 
+    const todayDate =
+        new Date()
+            .toISOString()
+            .split("T")[0];
+
     /*
     =========================
     USER FILTER
@@ -197,9 +202,16 @@ async function calculatePnL(request: Request) {
                     currentUser.id
                 ),
 
-                gt(
-                    positions.quantity,
-                    0
+                and(
+                    gt(
+                        positions.quantity,
+                        0
+                    ),
+
+                    gte(
+                        positions.expiry,
+                        todayDate
+                    )
                 )
             );
 
@@ -238,11 +250,15 @@ async function calculatePnL(request: Request) {
         getTodayStartIST();
 
     const exitTrades =
-        await db.query.trades.findMany({
-            where:
+        (
+            await db.query.trades.findMany({
+
+                where:
                 currentUser.role ===
                 "admin"
+
                     ? and(
+
                         eq(
                             trades.tradeType,
                             "EXIT"
@@ -253,7 +269,9 @@ async function calculatePnL(request: Request) {
                             todayStart
                         )
                     )
+
                     : and(
+
                         eq(
                             trades.tradeType,
                             "EXIT"
@@ -270,10 +288,13 @@ async function calculatePnL(request: Request) {
                         )
                     ),
 
-            with: {
-                position: true
-            }
-        });
+                with: {
+                    position: true
+                }
+            })
+        ).filter(trade =>
+            trade.position?.expiry &&
+            trade.position.expiry >= todayDate);
 
     /*
     =========================
@@ -439,6 +460,10 @@ async function calculatePnL(request: Request) {
 }
 
 async function calculatePnLForUser(user: User) {
+    const todayDate =
+        new Date()
+            .toISOString()
+            .split("T")[0];
 
     // const currentUser =
     //     await requireUser(request);
@@ -457,14 +482,14 @@ async function calculatePnLForUser(user: User) {
                 0
             )
             : and(
-                eq(
-                    positions.userId,
-                    user.id
-                ),
-
                 gt(
                     positions.quantity,
                     0
+                ),
+
+                gte(
+                    positions.expiry,
+                    todayDate
                 )
             );
 
@@ -503,11 +528,15 @@ async function calculatePnLForUser(user: User) {
         getTodayStartIST();
 
     const exitTrades =
-        await db.query.trades.findMany({
-            where:
+        (
+            await db.query.trades.findMany({
+
+                where:
                 user.role ===
                 "admin"
+
                     ? and(
+
                         eq(
                             trades.tradeType,
                             "EXIT"
@@ -518,7 +547,9 @@ async function calculatePnLForUser(user: User) {
                             todayStart
                         )
                     )
+
                     : and(
+
                         eq(
                             trades.tradeType,
                             "EXIT"
@@ -535,10 +566,13 @@ async function calculatePnLForUser(user: User) {
                         )
                     ),
 
-            with: {
-                position: true
-            }
-        });
+                with: {
+                    position: true
+                }
+            })
+        ).filter(trade =>
+            trade.position?.expiry &&
+            trade.position.expiry >= todayDate);
 
     /*
     =========================
