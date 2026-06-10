@@ -105,6 +105,25 @@ export async function loader() {
     };
 }
 
+function formatIndianNumber(num) {
+    const [
+        integerPart,
+        decimalPart
+    ] = num.toString().split(".");
+
+    const lastThree = integerPart.slice(-3);
+    const otherNumbers = integerPart.slice(0, -3);
+
+    const formatted =
+        otherNumbers
+            ? otherNumbers.replace(/\B(?=(\d{2})+(?!\d))/g, ",") + "," + lastThree
+            : lastThree;
+
+    return decimalPart
+        ? `${formatted}.${decimalPart}`
+        : formatted;
+}
+
 /* =========================
    HELPERS
 ========================= */
@@ -266,7 +285,7 @@ export default function CalendarPnL({
                     </div>
 
                     <div className={styles.monthPnlValue}>
-                        ₹ {selectedMonthPnl.toFixed(0)}
+                        ₹ {formatIndianNumber(selectedMonthPnl.toFixed(0))}
                     </div>
                 </div>
 
