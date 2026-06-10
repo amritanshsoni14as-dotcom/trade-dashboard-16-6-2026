@@ -1,6 +1,7 @@
 import {
     and,
     eq,
+    gt,
     gte,
     inArray,
     isNotNull
@@ -186,7 +187,10 @@ export async function updateSettledPrices(token: string) {
 }
 
 export async function updatePreviousSettledPrices(token: string) {
-
+    const today =
+        new Date()
+            .toISOString()
+            .split("T")[0];
     const rows =
         await db.query.positions.findMany({
             where: and(
@@ -202,7 +206,7 @@ export async function updatePreviousSettledPrices(token: string) {
 
                 gt(
                     positions.expiry,
-                    new Date()
+                    today
                 )
             )
         });

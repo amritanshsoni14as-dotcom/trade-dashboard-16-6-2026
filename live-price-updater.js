@@ -1,5 +1,5 @@
 const BASE_URL =
-    "http://localhost:5173/api/live-price-update";
+    "https://manika-mam-02-06-2026-one.vercel.app/api/live-price-update";
 
 async function updateLivePrices() {
 

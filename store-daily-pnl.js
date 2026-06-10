@@ -1,7 +1,7 @@
 
 
 const BASE_URL =
-    "http://localhost:5173/api/store-daily-pnl";
+    "https://manika-mam-02-06-2026-one.vercel.app/api/store-daily-pnl";
 
 /*
 =========================
