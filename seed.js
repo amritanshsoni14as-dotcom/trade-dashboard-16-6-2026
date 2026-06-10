@@ -79,13 +79,13 @@ export async function importTrades(userId, rawData) {
         const exitQty = Number(p[5]);
         const exitPrice = Number(p[6]);
         console.log({
-    raw: line,
-    symbol,
-    entryQty,
-    entryPrice,
-    exitQty,
-    exitPrice
-});
+            raw: line,
+            symbol,
+            entryQty,
+            entryPrice,
+            exitQty,
+            exitPrice
+        });
 
         if (!positionCache[symbol]) {
             positionCache[symbol] = await createPosition(symbol, userId, entryPrice);
@@ -115,7 +115,7 @@ export async function importTrades(userId, rawData) {
 
             await db.update(positions)
                 .set({
-                    quantity: sql`${newQty}`,
+                    // quantity: sql`${newQty}`,
                     currentPrice: entryPrice
                 })
                 .where(eq(positions.id, position.id));
@@ -142,7 +142,7 @@ export async function importTrades(userId, rawData) {
 
             await db.update(positions)
                 .set({
-                    quantity: sql`${s.quantity}`,
+                    // quantity: sql`${s.quantity}`,
                     currentPrice: exitPrice
                 })
                 .where(eq(positions.id, position.id));
