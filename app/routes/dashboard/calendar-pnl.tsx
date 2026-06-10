@@ -74,6 +74,13 @@ export async function loader() {
             lotSize
         };
     });
+    const openPositions =
+        await db.query.positions.findMany({
+            where: (table, {
+                gt 
+            }) =>
+                gt(table.quantity, 0)
+        });
 
     const monthlyPnlsMap =
         new Map<string, number>();
@@ -98,6 +105,32 @@ export async function loader() {
             existing + trade.pnl
         );
     }
+
+    for (const position of openPositions) {
+        if (!position.expiry) continue;
+
+        const pnl =
+            calculateOpenPositionExpiryPnL(position);
+
+        // console.log(pnl)
+        if (!pnl) continue;
+
+        const expiryDate =
+            new Date(`${position.expiry}T00:00:00`);
+
+        const key =
+            `${expiryDate.getFullYear()}-${expiryDate.getMonth()}`;
+
+        const existing =
+            monthlyPnlsMap.get(key) ?? 0;
+
+        monthlyPnlsMap.set(
+            key,
+            existing + pnl
+        );
+    }
+
+    console.log(monthlyPnlsMap);
 
     return {
         rows,
@@ -138,6 +171,62 @@ function getMonthRange(date: Date) {
         daysInMonth: new Date(year, monthIndex + 1, 0).getDate(),
         firstDay: new Date(year, monthIndex, 1).getDay()
     };
+}
+
+function calculateOpenPositionExpiryPnL(position: any) {
+    if (!position) return 0;
+
+    const qty =
+        Number(position.quantity ?? 0);
+
+    if (qty <= 0) return 0;
+
+    if (!position.expiry) return 0;
+
+    const expiryDate =
+        new Date(`${position.expiry}T00:00:00`);
+
+    const now =
+        new Date();
+
+    const sameMonth =
+        expiryDate.getMonth() === now.getMonth()
+        &&
+        expiryDate.getFullYear() === now.getFullYear();
+
+    if (!sameMonth) return 0;
+
+    const settled =
+        Number(position.previousSettledPrice ?? 0);
+
+    const average =
+        Number(position.entryPrice ?? 0);
+
+    const lotSize =
+        Number(position.lotSize ?? 1);
+    // console.log("SCRIPT:", position.script);
+    // console.log("POSITION TYPE:", position.positionType);
+    // console.log("SETTLED:", settled);
+    // console.log("AVERAGE:", average);
+    // console.log("LOT SIZE:", lotSize);
+
+    let pnl = 0;
+
+    if (position.positionType === "LONG") {
+        pnl = (settled - average) * qty * lotSize;
+
+        // console.log(
+        //     `LONG => (${settled} - ${average}) * ${qty} * ${lotSize}`
+        // );
+    } else {
+        pnl = (average - settled) * qty * lotSize;
+
+        // console.log(
+        //     `SHORT => (${average} - ${settled}) * ${qty} * ${lotSize}`
+        // );
+    }
+
+    return Number(pnl.toFixed(2));
 }
 
 /* =========================
