@@ -13,7 +13,7 @@ export default [
 
         route("dashboard", "./routes/dashboard/layout.tsx", [
             route("trades", "./routes/dashboard/trades.tsx"),
-            route("mtm", "./routes/dashboard/mtm.tsx"),
+            route("closed-trades", "./routes/dashboard/mtm.tsx"),
             route("add-trade", "./routes/dashboard/add-trade.tsx"),
             route("manage-users", "./routes/dashboard/manage-users.tsx"),
             route(

@@ -1,94 +1,203 @@
-.container {
-    padding: 2rem;
+.page {
     min-height: 100vh;
-    background: #f8fbff;
-    color: #0f172a;
+
+    background: #0a0c10;
+
+    padding: 24px;
 }
 
+/* =========================
+   HEADER
+========================= */
+
 .header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 2rem;
+    margin-bottom: 24px;
 }
 
 .header h1 {
+    margin: 0;
+
+    color: white;
+
     font-size: 2rem;
+
     font-weight: 700;
-    color: #0f172a;
 }
 
-.totalPnL {
-    padding: 0.9rem 1.4rem;
-    border-radius: 14px;
-    font-size: 1.2rem;
-    font-weight: 700;
-    background: white;
-    border: 2px solid #dbeafe;
-    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.08);
+.header p {
+    margin-top: 6px;
+
+    color: #9097a4;
 }
+
+/* =========================
+   KPI
+========================= */
+
+.kpiGrid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(
+            2,
+            minmax(0, 1fr)
+        );
+
+    gap: 16px;
+
+    margin-bottom: 24px;
+}
+
+.kpiCard {
+    background: #11141b;
+
+    border: 1px solid #1f242e;
+
+    border-radius: 20px;
+
+    padding: 20px;
+}
+
+.kpiLabel {
+    color: #9097a4;
+
+    font-size: 12px;
+
+    text-transform: uppercase;
+
+    letter-spacing: 0.08em;
+
+    margin-bottom: 10px;
+}
+
+.kpiValue {
+    color: white;
+
+    font-size: 32px;
+
+    font-weight: 700;
+}
+
+.profit {
+    color: #22c55e;
+}
+
+.loss {
+    color: #ef4444;
+}
+
+.table .profit {
+    color: #22c55e;
+}
+
+.table .loss {
+    color: #ef4444;
+}
+
+/* =========================
+   TABLE
+========================= */
 
 .tableWrapper {
     overflow-x: auto;
-    border-radius: 18px;
-    background: white;
-    border: 1px solid #dbeafe;
-    box-shadow: 0 10px 30px rgba(59, 130, 246, 0.08);
+
+    background: #11141b;
+
+    border: 1px solid #1f242e;
+
+    border-radius: 20px;
 }
 
 .table {
     width: 100%;
+
     border-collapse: collapse;
+
+    background: #11141b;
 }
 
 .table thead {
-    background: #eff6ff;
+    background: #11141b;
 }
 
 .table th {
-    padding: 1rem;
+    padding: 16px;
+
     text-align: left;
-    font-size: 0.9rem;
-    font-weight: 700;
-    color: #1e3a8a;
-    border-bottom: 1px solid #dbeafe;
+
+    color: #9097a4;
+
+    font-size: 12px;
+
+    font-weight: 600;
+
+    text-transform: uppercase;
+
+    letter-spacing: 0.08em;
+
+    border-bottom: 1px solid #1f242e;
 }
 
 .table td {
-    padding: 1rem;
-    font-size: 0.95rem;
-    border-bottom: 1px solid #eff6ff;
-}
+    padding: 16px;
 
-.table tbody tr {
-    transition: background 0.15s ease;
+    color: white;
+
+    font-size: 14px;
+
+    border-bottom: 1px solid #1f242e;
 }
 
 .table tbody tr:hover {
-    background: #f0f9ff;
+    background: #171b24;
 }
 
-.profit {
-    color: #16a34a;
+.table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 900px) {
+
+    .kpiGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .table th,
+    .table td {
+        padding: 12px;
+    }
+}
+
+
+.kpiGrid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(
+            4,
+            minmax(0, 1fr)
+        );
+
+    gap: 16px;
+
+    margin-bottom: 24px;
+}
+
+.sectionTitle {
+    margin-top: 32px;
+    margin-bottom: 12px;
+
+    color: white;
+
+    font-size: 18px;
+
     font-weight: 700;
 }
 
-.loss {
-    color: #dc2626;
-    font-weight: 700;
-}
-
-
-.table {
-    font-size: 15px;
-}
-
-.table th {
-    font-size: 20px;
-    font-weight: 600;
-    opacity: 0.8;
-}
-
-.table td {
-    font-size: 20px;
+.tableWrapper {
+    margin-bottom: 28px;
 }

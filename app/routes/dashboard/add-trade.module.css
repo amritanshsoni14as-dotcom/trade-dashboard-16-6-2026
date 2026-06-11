@@ -1,82 +1,187 @@
-/* 2nd - Cheerful Light Mode */
+.page {
+    min-height: 100vh;
+    background: #0a0c10;
+    padding: 32px 24px;
+}
 
 .container {
-  max-width: 500px;
-  margin: 0 auto;
-  padding: 24px;
-  background-color: #ffffff; /* Clean white background */
+    max-width: 900px;
+    margin: 0 auto;
 }
 
 .title {
-  margin-bottom: 24px;
-  color: #111827; /* Strong, clear heading color */
-  font-size: 1.5rem;
+    margin: 0 0 24px;
+
+    font-size: 2rem;
+    font-weight: 700;
+
+    color: #ffffff;
 }
+
+/* =========================
+   FORM CONTAINER
+========================= */
 
 .form {
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
+    background: #11141b;
+
+    border: 1px solid #1f242e;
+
+    border-radius: 20px;
+
+    padding: 24px;
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(
+            2,
+            minmax(0, 1fr)
+        );
+
+    gap: 18px;
 }
 
+/* =========================
+   FIELDS
+========================= */
+
 .field {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
+    display: flex;
+    flex-direction: column;
+
+    gap: 8px;
 }
 
 .field label {
-  font-size: 14px;
-  font-weight: 600;
-  color: #4b5563; /* Softer grey for labels */
+    color: #9097a4;
+
+    font-size: 13px;
+
+    font-weight: 500;
+
+    letter-spacing: 0.04em;
 }
+
+/* =========================
+   INPUTS
+========================= */
 
 .field input,
 .field select {
-  padding: 10px 12px;
-  /* Soft border with a hint of blue-grey */
-  border: 1px solid #e5e7eb; 
-  border-radius: 8px;
-  background-color: #ffffff;
-  color: #1f2937;
-  font-size: 14px;
-  transition: border-color 0.2s, box-shadow 0.2s;
+    width: 100%;
+
+    height: 44px;
+
+    padding: 0 14px;
+
+    border-radius: 12px;
+
+    border: 1px solid #1f242e;
+
+    background: #0d1016;
+
+    color: #ffffff;
+
+    font-size: 14px;
+
+    transition:
+        border-color 0.15s ease,
+        box-shadow 0.15s ease;
+
+      box-sizing: border-box;
+}
+
+.field input::placeholder {
+    color: #6b7280;
 }
 
 .field input:focus,
 .field select:focus {
-  outline: none;
-  border-color: #6366f1; /* Cheerful Indigo accent */
-  /* Subtle glow to feel "alive" */
-  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1); 
+    outline: none;
+
+    border-color: rgb(34, 211, 238);
+
+    box-shadow:
+        0 0 0 3px rgba(
+            37,
+            99,
+            235,
+            0.15
+        );
 }
 
-.submitButton {
-  padding: 12px 16px;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 14px;
-  font-weight: 600;
-  
-  /* Bright, energetic blue */
-  background-color: #4f46e5; 
-  color: #ffffff;
-  transition: background-color 0.2s ease;
-}
-
-.submitButton:hover {
-  background-color: #4338ca; /* Slightly deeper blue on hover */
-}
+/* =========================
+   ERROR
+========================= */
 
 .error {
-  margin-top: 4px;
-  font-size: 0.85rem;
-  color: #e11d48; /* Energetic rose/red for errors */
+    margin: 0;
+
+    font-size: 13px;
+
+    color: #ef4444;
+}
+
+.fieldError {
+    border-color: #ef4444 !important;
+}
+
+/* =========================
+   BUTTON
+========================= */
+
+.submitButton {
+    grid-column: 1 / -1;
+
+    height: 48px;
+
+    border: none;
+
+    border-radius: 12px;
+
+    background: rgb(34, 211, 238);
+
+    color: black;
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition:
+        background 0.15s ease,
+        transform 0.15s ease;
+}
+
+.submitButton:hover:not(:disabled) {
+    background: #1d4ed8;
+    color: white;
+
+    transform: translateY(-1px);
 }
 
 .submitButton:disabled {
-  background-color: #9ca3af;
-  opacity: 0.7;
-  cursor: not-allowed;
+    opacity: 0.6;
+
+    cursor: not-allowed;
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 768px) {
+    .form {
+        grid-template-columns: 1fr;
+    }
+
+    .submitButton {
+        grid-column: auto;
+    }
+
+    .title {
+        font-size: 1.7rem;
+    }
 }

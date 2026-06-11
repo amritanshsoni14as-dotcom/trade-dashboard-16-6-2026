@@ -1,125 +1,292 @@
-.container {
+.page {
+    min-height: 100vh;
+
+    background: #0a0c10;
+
     padding: 24px;
-    max-width: 900px;
+}
+
+.container {
+    max-width: 1100px;
+
     margin: 0 auto;
 }
 
 .title {
-    font-size: 28px;
+    margin: 0 0 24px;
+
+    color: #ffffff;
+
+    font-size: 2rem;
+
     font-weight: 700;
-    margin-bottom: 20px;
 }
 
 /* =========================
-   CREATE USER FORM
+   FORM
 ========================= */
 
 .form {
+    background: #11141b;
+
+    border: 1px solid #1f242e;
+
+    border-radius: 20px;
+
+    padding: 24px;
+
     display: flex;
-    gap: 12px;
+
     flex-wrap: wrap;
-    padding: 16px;
-    border: 2px solid #333;
-    border-radius: 10px;
-    background: #0f0f0f08;
-    margin-bottom: 20px;
+
+    gap: 16px;
+
+    margin-bottom: 32px;
 }
 
 .form input,
 .form select {
-    padding: 10px 12px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
+    flex: 1;
+
+    min-width: 220px;
+
+    height: 44px;
+
+    padding: 0 14px;
+
+    border-radius: 12px;
+
+    border: 1px solid #1f242e;
+
+    background: #0d1016;
+
+    color: white;
+
     font-size: 14px;
-    min-width: 180px;
+}
+
+.form input::placeholder {
+    color: #9097a4;
+}
+
+.form input:focus,
+.form select:focus {
+    outline: none;
+
+    border-color: rgb(34, 211, 238);
+
+    box-shadow:
+        0 0 0 3px rgba(
+            34,
+            211,
+            238,
+            0.15
+        );
 }
 
 .form button {
-    padding: 10px 16px;
+    height: 44px;
+
+    padding: 0 20px;
+
     border: none;
-    border-radius: 6px;
-    background: black;
-    color: white;
+
+    border-radius: 12px;
+
+    background: rgb(34, 211, 238);
+
+    color: #0a0c10;
+
+    font-weight: 700;
+
     cursor: pointer;
-    font-weight: 600;
+
+    transition: 0.15s ease;
 }
 
 .form button:hover {
-    opacity: 0.85;
+    opacity: 0.9;
 }
 
 /* =========================
-   USERS LIST
+   SECTION
 ========================= */
 
-.list {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    margin-top: 20px;
+.sectionTitle {
+    margin-bottom: 12px;
+
+    color: white;
+
+    font-size: 18px;
+
+    font-weight: 700;
 }
 
-.userRow {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 12px 16px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    background: white;
-}
+/* =========================
+   TABLE
+========================= */
 
-.userInfo {
-    display: flex;
-    gap: 16px;
-    align-items: center;
-    font-size: 15px;
-}
+.tableWrapper {
+    overflow-x: auto;
 
-.userId {
-    opacity: 0.6;
-    font-weight: 500;
-}
+    background: #11141b;
 
-.username {
-    font-weight: 600;
-}
+    border: 1px solid #1f242e;
 
-.role {
-    padding: 4px 10px;
     border-radius: 20px;
-    font-size: 13px;
-    background: #f0f0f0;
 }
 
-/* role colors */
+.table {
+    width: 100%;
+
+    border-collapse: collapse;
+
+    background: #11141b;
+}
+
+.table thead {
+    background: #11141b;
+}
+
+.table th {
+    padding: 16px;
+
+    text-align: left;
+
+    color: #9097a4;
+
+    font-size: 12px;
+
+    font-weight: 600;
+
+    text-transform: uppercase;
+
+    letter-spacing: 0.08em;
+
+    border-bottom: 1px solid #1f242e;
+}
+
+.table td {
+    padding: 16px;
+
+    color: white;
+
+    font-size: 14px;
+
+    border-bottom: 1px solid #1f242e;
+}
+
+.table tbody tr:hover {
+    background: #171b24;
+}
+
+.table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* =========================
+   ROLE BADGES
+========================= */
+
 .roleAdmin {
-    background: #ffe5e5;
-    color: #b30000;
+    display: inline-flex;
+
+    align-items: center;
+
+    padding: 4px 10px;
+
+    border-radius: 999px;
+
+    background: rgba(
+        239,
+        68,
+        68,
+        0.15
+    );
+
+    color: #ef4444;
+
+    font-size: 12px;
+
+    font-weight: 600;
 }
 
 .roleParticipant {
-    background: #e8f3ff;
-    color: #004a99;
-}
+    display: inline-flex;
 
-/* delete button */
-.deleteBtn {
-    padding: 8px 12px;
-    border: none;
-    border-radius: 6px;
-    background: #ff3b3b;
-    color: white;
-    cursor: pointer;
+    align-items: center;
+
+    padding: 4px 10px;
+
+    border-radius: 999px;
+
+    background: rgba(
+        34,
+        211,
+        238,
+        0.15
+    );
+
+    color: rgb(34, 211, 238);
+
+    font-size: 12px;
+
     font-weight: 600;
 }
 
-.deleteBtn:hover {
-    background: #d60000;
+/* =========================
+   DELETE BUTTON
+========================= */
+
+.deleteBtn {
+    border: none;
+
+    border-radius: 10px;
+
+    padding: 8px 14px;
+
+    background: #ef4444;
+
+    color: white;
+
+    font-size: 13px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition: 0.15s ease;
 }
 
+.deleteBtn:hover {
+    background: #dc2626;
+}
+
+/* =========================
+   HR
+========================= */
+
 hr {
-    margin: 20px 0;
-    border: none;
-    border-top: 1px solid #ddd;
+    display: none;
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 900px) {
+
+    .form {
+        flex-direction: column;
+    }
+
+    .form input,
+    .form select {
+        width: 100%;
+    }
+
+    .table th,
+    .table td {
+        padding: 12px;
+    }
 }

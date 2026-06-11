@@ -94,279 +94,281 @@ export default function AddTradePage() {
         instrumentType === "OPTIONS";
 
     return (
-        <div className={styles.container}>
-            <h2 className={styles.title}>
-                Add Trade
-            </h2>
+        <div className={styles.page}>
+            <div className={styles.container}>
+                <h2 className={styles.title}>
+                    Add Trade
+                </h2>
 
-            <Form method="post" className={styles.form}>
-                {/* Exchange */}
-                <div className={styles.field}>
-                    <label>Exchange</label>
-
-                    <select
-                        name="exchange"
-                        defaultValue={values.exchange}
-                        className={
-                            errors.exchange
-                                ? styles.fieldError
-                                : ""
-                        }
-                    >
-                        <option value="">
-                            Select Exchange
-                        </option>
-
-                        <option value="NSE">NSE</option>
-
-                        <option value="BSE">BSE</option>
-                    </select>
-
-                    {errors.exchange && (
-                        <p className={styles.error}>
-                            {errors.exchange}
-                        </p>
-                    )}
-                </div>
-
-                {/* Instrument Type */}
-                <div className={styles.field}>
-                    <label>Instrument Type</label>
-
-                    <select
-                        name="instrument_type"
-                        value={instrumentType}
-                        onChange={(e) =>
-                            setInstrumentType(e.target.value)
-                        }
-                        className={
-                            errors.instrumentType
-                                ? styles.fieldError
-                                : ""
-                        }
-                    >
-                        <option value="">
-                            Select Instrument
-                        </option>
-
-                        <option value="FUTURE">
-                            Futures
-                        </option>
-
-                        <option value="OPTIONS">
-                            Options
-                        </option>
-                    </select>
-
-                    {errors.instrumentType && (
-                        <p className={styles.error}>
-                            {errors.instrumentType}
-                        </p>
-                    )}
-                </div>
-
-                {/* Script */}
-                <div className={styles.field}>
-                    <label>Stock Symbol</label>
-
-                    <input
-                        type="text"
-                        name="script"
-                        placeholder="RELIANCE"
-                        defaultValue={values.script}
-                        className={
-                            errors.script
-                                ? styles.fieldError
-                                : ""
-                        }
-                    />
-
-                    {errors.script && (
-                        <p className={styles.error}>
-                            {errors.script}
-                        </p>
-                    )}
-                </div>
-
-                {/* Expiry */}
-                <div className={styles.field}>
-                    <label>Expiry Date</label>
-
-                    <input
-                        type="date"
-                        name="expiry"
-                        defaultValue={values.expiry}
-                        className={
-                            errors.expiry
-                                ? styles.fieldError
-                                : ""
-                        }
-                    />
-
-                    {errors.expiry && (
-                        <p className={styles.error}>
-                            {errors.expiry}
-                        </p>
-                    )}
-                </div>
-
-                {/* Strike Price */}
-                {isOptions && (
+                <Form method="post" className={styles.form}>
+                    {/* Exchange */}
                     <div className={styles.field}>
-                        <label>Strike Price</label>
-
-                        <input
-                            type="number"
-                            step="0.01"
-                            name="strike_price"
-                            placeholder="25000"
-                            defaultValue={
-                                values.strike_price
-                            }
-                            className={
-                                errors.strikePrice
-                                    ? styles.fieldError
-                                    : ""
-                            }
-                        />
-
-                        {errors.strikePrice && (
-                            <p className={styles.error}>
-                                {errors.strikePrice}
-                            </p>
-                        )}
-                    </div>
-                )}
-
-                {/* Option Type */}
-                {isOptions && (
-                    <div className={styles.field}>
-                        <label>Option Type</label>
+                        <label>Exchange</label>
 
                         <select
-                            name="option_type"
-                            defaultValue={
-                                values.option_type
-                            }
+                            name="exchange"
+                            defaultValue={values.exchange}
                             className={
-                                errors.optionType
+                                errors.exchange
                                     ? styles.fieldError
                                     : ""
                             }
                         >
                             <option value="">
-                                Select Option Type
+                                Select Exchange
                             </option>
 
-                            <option value="CE">
-                                CE (Call)
-                            </option>
+                            <option value="NSE">NSE</option>
 
-                            <option value="PE">
-                                PE (Put)
-                            </option>
+                            <option value="BSE">BSE</option>
                         </select>
 
-                        {errors.optionType && (
+                        {errors.exchange && (
                             <p className={styles.error}>
-                                {errors.optionType}
+                                {errors.exchange}
                             </p>
                         )}
                     </div>
-                )}
 
-                {/* Position Type */}
-                <div className={styles.field}>
-                    <label>Position Type</label>
+                    {/* Instrument Type */}
+                    <div className={styles.field}>
+                        <label>Instrument Type</label>
 
-                    <select
-                        name="position_type"
-                        defaultValue={
-                            values.position_type
-                        }
-                        className={
-                            errors.positionType
-                                ? styles.fieldError
-                                : ""
-                        }
+                        <select
+                            name="instrument_type"
+                            value={instrumentType}
+                            onChange={(e) =>
+                                setInstrumentType(e.target.value)
+                            }
+                            className={
+                                errors.instrumentType
+                                    ? styles.fieldError
+                                    : ""
+                            }
+                        >
+                            <option value="">
+                                Select Instrument
+                            </option>
+
+                            <option value="FUTURE">
+                                Futures
+                            </option>
+
+                            <option value="OPTIONS">
+                                Options
+                            </option>
+                        </select>
+
+                        {errors.instrumentType && (
+                            <p className={styles.error}>
+                                {errors.instrumentType}
+                            </p>
+                        )}
+                    </div>
+
+                    {/* Script */}
+                    <div className={styles.field}>
+                        <label>Stock Symbol</label>
+
+                        <input
+                            type="text"
+                            name="script"
+                            placeholder="RELIANCE"
+                            defaultValue={values.script}
+                            className={
+                                errors.script
+                                    ? styles.fieldError
+                                    : ""
+                            }
+                        />
+
+                        {errors.script && (
+                            <p className={styles.error}>
+                                {errors.script}
+                            </p>
+                        )}
+                    </div>
+
+                    {/* Expiry */}
+                    <div className={styles.field}>
+                        <label>Expiry Date</label>
+
+                        <input
+                            type="date"
+                            name="expiry"
+                            defaultValue={values.expiry}
+                            className={
+                                errors.expiry
+                                    ? styles.fieldError
+                                    : ""
+                            }
+                        />
+
+                        {errors.expiry && (
+                            <p className={styles.error}>
+                                {errors.expiry}
+                            </p>
+                        )}
+                    </div>
+
+                    {/* Strike Price */}
+                    {isOptions && (
+                        <div className={styles.field}>
+                            <label>Strike Price</label>
+
+                            <input
+                                type="number"
+                                step="0.01"
+                                name="strike_price"
+                                placeholder="25000"
+                                defaultValue={
+                                    values.strike_price
+                                }
+                                className={
+                                    errors.strikePrice
+                                        ? styles.fieldError
+                                        : ""
+                                }
+                            />
+
+                            {errors.strikePrice && (
+                                <p className={styles.error}>
+                                    {errors.strikePrice}
+                                </p>
+                            )}
+                        </div>
+                    )}
+
+                    {/* Option Type */}
+                    {isOptions && (
+                        <div className={styles.field}>
+                            <label>Option Type</label>
+
+                            <select
+                                name="option_type"
+                                defaultValue={
+                                    values.option_type
+                                }
+                                className={
+                                    errors.optionType
+                                        ? styles.fieldError
+                                        : ""
+                                }
+                            >
+                                <option value="">
+                                    Select Option Type
+                                </option>
+
+                                <option value="CE">
+                                    CE (Call)
+                                </option>
+
+                                <option value="PE">
+                                    PE (Put)
+                                </option>
+                            </select>
+
+                            {errors.optionType && (
+                                <p className={styles.error}>
+                                    {errors.optionType}
+                                </p>
+                            )}
+                        </div>
+                    )}
+
+                    {/* Position Type */}
+                    <div className={styles.field}>
+                        <label>Position Type</label>
+
+                        <select
+                            name="position_type"
+                            defaultValue={
+                                values.position_type
+                            }
+                            className={
+                                errors.positionType
+                                    ? styles.fieldError
+                                    : ""
+                            }
+                        >
+                            <option value="">
+                                Select Position
+                            </option>
+
+                            <option value="LONG">
+                                Buy / Long
+                            </option>
+
+                            <option value="SHORT">
+                                Sell / Short
+                            </option>
+                        </select>
+
+                        {errors.positionType && (
+                            <p className={styles.error}>
+                                {errors.positionType}
+                            </p>
+                        )}
+                    </div>
+
+                    {/* Quantity */}
+                    <div className={styles.field}>
+                        <label>Number of Lots</label>
+
+                        <input
+                            type="number"
+                            name="quantity"
+                            defaultValue={values.quantity}
+                            className={
+                                errors.quantity
+                                    ? styles.fieldError
+                                    : ""
+                            }
+                        />
+
+                        {errors.quantity && (
+                            <p className={styles.error}>
+                                {errors.quantity}
+                            </p>
+                        )}
+                    </div>
+
+                    {/* Entry Price */}
+                    <div className={styles.field}>
+                        <label>Entry Price</label>
+
+                        <input
+                            type="number"
+                            step="0.01"
+                            name="entry_price"
+                            defaultValue={
+                                values.entry_price
+                            }
+                            className={
+                                errors.entryPrice
+                                    ? styles.fieldError
+                                    : ""
+                            }
+                        />
+
+                        {errors.entryPrice && (
+                            <p className={styles.error}>
+                                {errors.entryPrice}
+                            </p>
+                        )}
+                    </div>
+
+                    <button
+                        type="submit"
+                        disabled={isSubmitting}
+                        className={styles.submitButton}
                     >
-                        <option value="">
-                            Select Position
-                        </option>
-
-                        <option value="LONG">
-                            Buy / Long
-                        </option>
-
-                        <option value="SHORT">
-                            Sell / Short
-                        </option>
-                    </select>
-
-                    {errors.positionType && (
-                        <p className={styles.error}>
-                            {errors.positionType}
-                        </p>
-                    )}
-                </div>
-
-                {/* Quantity */}
-                <div className={styles.field}>
-                    <label>Number of Lots</label>
-
-                    <input
-                        type="number"
-                        name="quantity"
-                        defaultValue={values.quantity}
-                        className={
-                            errors.quantity
-                                ? styles.fieldError
-                                : ""
-                        }
-                    />
-
-                    {errors.quantity && (
-                        <p className={styles.error}>
-                            {errors.quantity}
-                        </p>
-                    )}
-                </div>
-
-                {/* Entry Price */}
-                <div className={styles.field}>
-                    <label>Entry Price</label>
-
-                    <input
-                        type="number"
-                        step="0.01"
-                        name="entry_price"
-                        defaultValue={
-                            values.entry_price
-                        }
-                        className={
-                            errors.entryPrice
-                                ? styles.fieldError
-                                : ""
-                        }
-                    />
-
-                    {errors.entryPrice && (
-                        <p className={styles.error}>
-                            {errors.entryPrice}
-                        </p>
-                    )}
-                </div>
-
-                <button
-                    type="submit"
-                    disabled={isSubmitting}
-                    className={styles.submitButton}
-                >
-                    {isSubmitting
-                        ? "Saving..."
-                        : "Save Trade"}
-                </button>
-            </Form>
+                        {isSubmitting
+                            ? "Saving..."
+                            : "Save Trade"}
+                    </button>
+                </Form>
+            </div>
         </div>
     );
 }

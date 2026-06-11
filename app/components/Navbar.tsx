@@ -28,14 +28,14 @@ export function Navbar() {
                 </NavLink>
 
                 <NavLink
-                    to="/dashboard/mtm"
+                    to="/dashboard/closed-trades"
                     className={({
                         isActive 
                     }) =>
                         `${styles.link} ${isActive ? styles.active : ""}`
                     }
                 >
-                    📈 Stockwise Summary
+                    📈 Closed Trades
                 </NavLink>
 
                 <NavLink

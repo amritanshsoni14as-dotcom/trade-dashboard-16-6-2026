@@ -186,54 +186,82 @@ export default function ManageUsersPage() {
                 USERS LIST
             ====================== */}
 
-            <div className={styles.list}>
-                {data.users.map((user: any) => (
-                    <div
-                        key={user.id}
-                        className={styles.userRow}
-                    >
-                        <div className={styles.userInfo}>
-                            <div className={styles.userId}>
-                                #{user.id}
-                            </div>
+            <h2 className={styles.sectionTitle}>
+                Users
+            </h2>
 
-                            <div className={styles.username}>
-                                {user.username}
-                            </div>
+            <div className={styles.tableWrapper}>
+                <table className={styles.table}>
 
-                            <div
-                                className={`${styles.role} ${
-                                    user.role === "admin"
-                                        ? styles.roleAdmin
-                                        : styles.roleParticipant
-                                }`}
-                            >
-                                {user.role}
-                            </div>
-                        </div>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Username</th>
+                            <th>Role</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
 
-                        <Form method="post">
-                            <input
-                                type="hidden"
-                                name="intent"
-                                value="delete-user"
-                            />
+                    <tbody>
 
-                            <input
-                                type="hidden"
-                                name="userId"
-                                value={user.id}
-                            />
+                        {data.users.map((user: any) => (
 
-                            <button
-                                type="submit"
-                                className={styles.deleteBtn}
-                            >
-                                Delete
-                            </button>
-                        </Form>
-                    </div>
-                ))}
+                            <tr key={user.id}>
+
+                                <td>
+                                    #{user.id}
+                                </td>
+
+                                <td>
+                                    {user.username}
+                                </td>
+
+                                <td>
+                                    <span
+                                        className={
+                                            user.role === "admin"
+                                                ? styles.roleAdmin
+                                                : styles.roleParticipant
+                                        }
+                                    >
+                                        {user.role}
+                                    </span>
+                                </td>
+
+                                <td>
+
+                                    <Form method="post">
+
+                                        <input
+                                            type="hidden"
+                                            name="intent"
+                                            value="delete-user"
+                                        />
+
+                                        <input
+                                            type="hidden"
+                                            name="userId"
+                                            value={user.id}
+                                        />
+
+                                        <button
+                                            type="submit"
+                                            className={styles.deleteBtn}
+                                        >
+                                            Delete
+                                        </button>
+
+                                    </Form>
+
+                                </td>
+
+                            </tr>
+
+                        ))}
+
+                    </tbody>
+
+                </table>
             </div>
         </div>
     );

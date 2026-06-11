@@ -1,180 +1,282 @@
-import type {
-    Route
-} from "./+types/mtm";
-
 import {
-    calculatePnL
-} from "~/database/utils.server";
-
-import {
-    useRevalidator
-} from "react-router";
-
-import {
-    useEffect
-} from "react";
-
+    requireUser 
+} from "~/utils/auth.server";
 import styles from "./mtm.module.css";
-
-/* =========================
-   LOADER
-========================= */
+import {
+    db 
+} from "~/database/db.server";
 
 export async function loader({
     request
-}: Route.LoaderArgs) {
-    const data =
-        await calculatePnL(request);
+}: any) {
+    const user = await requireUser(request);
 
-    return data;
-}
-
-function formatIndianNumber(num) {
-    const [
-        integerPart,
-        decimalPart
-    ] = num.toString().split(".");
-
-    const lastThree = integerPart.slice(-3);
-    const otherNumbers = integerPart.slice(0, -3);
-
-    const formatted =
-        otherNumbers
-            ? otherNumbers.replace(/\B(?=(\d{2})+(?!\d))/g, ",") + "," + lastThree
-            : lastThree;
-
-    return decimalPart
-        ? `${formatted}.${decimalPart}`
-        : formatted;
-}
-
-function formatDateIndian(dateString?: string | null) {
-
-    if (!dateString) {
-        return "-";
-    }
-
-    const date =
-        new Date(dateString);
-
-    return date.toLocaleDateString("en-GB");
-}
-
-/* =========================
-   COMPONENT
-========================= */
-
-export default function MTM({
-    loaderData
-}: Route.ComponentProps) {
-
-    const {
-        positions,
-        totalPnL
-    } = loaderData;
-    const futures = positions.filter((p: any) => p.instrumentType === "FUTURE");
-
-    const options = positions.filter((p: any) => p.instrumentType === "OPTIONS");
-
-    const revalidator =
-        useRevalidator();
+    // const intraday_data =
+    //     await calculatePnL(request);
 
     /*
     =========================
-    AUTO REFRESH
+    ADMIN
     =========================
     */
 
-    useEffect(() => {
-        const interval =
-            setInterval(() => {
-                revalidator.revalidate();
-            }, 10000);
+    // const whereClause =
+    //     user.role === "admin"
+    //         ? gt(positions.quantity, 0)
+    //         : eq(positions.userId, user.id);
 
-        return () =>
-            clearInterval(interval);
+    // const rows = await db.query.positions.findMany({
+    //     where:
+    //         user.role === "admin"
+    //             ? gt(positions.quantity, 0)
+    //             : (table, {
+    //                 and
+    //             }) =>
+    //                 and(
+    //                     eq(table.userId, user.id),
+    //                     gt(table.quantity, 0)
+    //                 ),
 
-    }, [
-        revalidator
-    ]);
+    //     with: {
+    //         user: true
+    //     },
+
+    //     orderBy: [
+    //         desc(positions.createdAt)
+    //     ]
+    // });
+
+    // const futures = rows.filter((position) =>
+    //     position.instrumentType ===
+    //     "FUTURE").sort((a, b) => a.id - b.id);
+
+    // const options = rows.filter((position) =>
+    //     position.instrumentType ===
+    //     "OPTIONS").sort((a, b) => a.id - b.id);
+
+    const exitTrades = await db.query.trades.findMany({
+        where: (table, {
+            eq
+        }) => eq(table.tradeType, "EXIT"),
+        with: {
+            user: true,
+            position: true
+        },
+        orderBy: (table, {
+            desc
+        }) => [
+            desc(table.createdAt)
+        ]
+    });
+
+    const exitTradesWithPnL = exitTrades.map((trade: any) => {
+        const position = trade.position;
+
+        const avgPrice = Number(position.averagePrice);
+        const exitPrice = Number(trade.price);
+        const qty = Number(trade.quantity);
+        const lotSize = Number(position.lotSize || 1);
+
+        let pnl = 0;
+
+        if (position.positionType === "LONG") {
+            pnl = (exitPrice - avgPrice) * qty * lotSize;
+        } else {
+            pnl = (avgPrice - exitPrice) * qty * lotSize;
+        }
+
+        return {
+            ...trade,
+            pnl: Number(pnl.toFixed(2)),
+            avgPrice,
+            exitPrice,
+            qty,
+            lotSize
+        };
+    });
+
+    // const futures_2 = intraday_data.positions.filter((p: any) => p.instrumentType === "FUTURE");
+
+    // const options_2 = intraday_data.positions.filter((p: any) => p.instrumentType === "OPTIONS");
+    return {
+        user,
+        // futures,
+        // options,
+        exitTrades: exitTradesWithPnL
+        // intraday_data,
+        // futures_2,
+        // options_2
+    };
+}
+
+export default function ExitTradesPage({
+    loaderData
+}: any) {
+
+    const {
+        exitTrades
+    } = loaderData;
+
+    const totalPnL = exitTrades.reduce(
+        (sum: number, t: any) =>
+            sum + (t.pnl ?? 0),
+        0
+    );
+    const winners = exitTrades.filter((t: any) => t.pnl > 0).length;
+
+    const losers = exitTrades.filter((t: any) => t.pnl < 0).length;
+
+    const futureTrades = exitTrades.filter((t: any) =>
+        t.position?.instrumentType === "FUTURE");
+
+    const optionTrades = exitTrades.filter((t: any) =>
+        t.position?.instrumentType === "OPTIONS");
 
     return (
-        <div className={styles.container}>
+        <div className={styles.page}>
 
             <div className={styles.header}>
-                <h1>
-                    Stockwise Summary
-                </h1>
+                <h1>Exit Trades</h1>
 
-                <div
-                    className={`${styles.totalPnL} ${
-                        totalPnL >= 0
-                            ? styles.profit
-                            : styles.loss
-                    }`}
-                >
-                    ₹ {formatIndianNumber(totalPnL.toFixed(2))}
-                </div>
+                <p>
+                    Historical exit transactions and realised PnL
+                </p>
             </div>
 
-            <h2 className={styles.sectionTitle}>Futures</h2>
+            <div className={styles.kpiGrid}>
 
+                <div className={styles.kpiCard}>
+                    <div className={styles.kpiLabel}>
+                        Total Exit Trades
+                    </div>
+
+                    <div className={styles.kpiValue}>
+                        {exitTrades.length}
+                    </div>
+                </div>
+
+                <div className={styles.kpiCard}>
+                    <div className={styles.kpiLabel}>
+                        Realised PnL
+                    </div>
+
+                    <div
+                        className={`${styles.kpiValue} ${
+                            totalPnL >= 0
+                                ? styles.profit
+                                : styles.loss
+                        }`}
+                    >
+                        ₹ {totalPnL.toLocaleString("en-IN")}
+                    </div>
+                </div>
+
+                <div className={styles.kpiCard}>
+                    <div className={styles.kpiLabel}>
+                        Winners
+                    </div>
+
+                    <div
+                        className={`${styles.kpiValue} ${styles.profit}`}
+                    >
+                        {winners}
+                    </div>
+                </div>
+
+                <div className={styles.kpiCard}>
+                    <div className={styles.kpiLabel}>
+                        Losers
+                    </div>
+
+                    <div
+                        className={`${styles.kpiValue} ${styles.loss}`}
+                    >
+                        {losers}
+                    </div>
+                </div>
+
+            </div>
+
+            <h2 className={styles.sectionTitle}>
+                Futures
+            </h2>
             <div className={styles.tableWrapper}>
+
                 <table className={styles.table}>
+
                     <thead>
                         <tr>
                             <th>Script</th>
                             <th>Type</th>
                             <th>Qty</th>
+                            <th>Lot Size</th>
                             <th>Avg Price</th>
-                            <th>Current</th>
-                            <th>Prev Close</th>
+                            <th>Exit Price</th>
                             <th>PnL</th>
-                            <th>Expiry</th>
-                            <th>Status</th>
+                            <th>User</th>
                         </tr>
                     </thead>
 
                     <tbody>
-                        {futures.map((position: any) => (
-                            <tr key={position.id}>
-                                <td>{position.script}</td>
 
-                                <td>{position.positionType}</td>
+                        {futureTrades.map((trade: any) => (
 
-                                <td>{position.quantity}</td>
-
-                                <td>₹{Number(position.averagePrice ?? 0).toFixed(2)}</td>
-
-                                <td>₹{Number(position.currentPrice ?? 0).toFixed(2)}</td>
+                            <tr key={trade.id}>
 
                                 <td>
-                                    ₹{Number(position.previousSettledPrice ?? 0).toFixed(2)}
+                                    {trade.position?.script}
+                                </td>
+
+                                <td>
+                                    {trade.position?.positionType}
+                                </td>
+
+                                <td>
+                                    {trade.qty}
+                                </td>
+
+                                <td>
+                                    {trade.lotSize}
+                                </td>
+
+                                <td>
+                                    ₹{trade.avgPrice.toFixed(2)}
+                                </td>
+
+                                <td>
+                                    ₹{trade.exitPrice.toFixed(2)}
                                 </td>
 
                                 <td
                                     className={
-                                        position.pnl >= 0 ? styles.profit : styles.loss
+                                        trade.pnl >= 0
+                                            ? styles.profit
+                                            : styles.loss
                                     }
                                 >
-                                    ₹{formatIndianNumber(position.pnl.toFixed(2))}
+                                    ₹{trade.pnl.toLocaleString("en-IN")}
                                 </td>
-
-                                <td>{formatDateIndian(position.expiry)}</td>
 
                                 <td>
-                                    {position.source === "EXIT" ? "Closed" : "Open"}
+                                    {trade.user?.username}
                                 </td>
+
                             </tr>
+
                         ))}
+
                     </tbody>
+
                 </table>
+
             </div>
-
-            <h2 className={styles.sectionTitle}>Options</h2>
-
+            <h2 className={styles.sectionTitle}>
+                Options
+            </h2>
             <div className={styles.tableWrapper}>
+
                 <table className={styles.table}>
+
                     <thead>
                         <tr>
                             <th>Script</th>
@@ -182,53 +284,74 @@ export default function MTM({
                             <th>Strike</th>
                             <th>Option</th>
                             <th>Qty</th>
+                            <th>Lot Size</th>
                             <th>Avg Price</th>
-                            <th>Current</th>
-                            <th>Prev Close</th>
+                            <th>Exit Price</th>
                             <th>PnL</th>
-                            <th>Expiry</th>
-                            <th>Status</th>
+                            <th>User</th>
                         </tr>
                     </thead>
 
                     <tbody>
-                        {options.map((position: any) => (
-                            <tr key={position.id}>
-                                <td>{position.script}</td>
 
-                                <td>{position.positionType}</td>
+                        {optionTrades.map((trade: any) => (
 
-                                <td>{position.strikePrice ?? "-"}</td>
-
-                                <td>{position.optionType ?? "-"}</td>
-
-                                <td>{position.quantity}</td>
-
-                                <td>₹{Number(position.averagePrice ?? 0).toFixed(2)}</td>
-
-                                <td>₹{Number(position.currentPrice ?? 0).toFixed(2)}</td>
+                            <tr key={trade.id}>
 
                                 <td>
-                                    ₹{Number(position.previousSettledPrice ?? 0).toFixed(2)}
+                                    {trade.position?.script}
+                                </td>
+
+                                <td>
+                                    {trade.position?.positionType}
+                                </td>
+
+                                <td>
+                                    {trade.position?.strikePrice}
+                                </td>
+
+                                <td>
+                                    {trade.position?.optionType}
+                                </td>
+
+                                <td>
+                                    {trade.qty}
+                                </td>
+
+                                <td>
+                                    {trade.lotSize}
+                                </td>
+
+                                <td>
+                                    ₹{trade.avgPrice.toFixed(2)}
+                                </td>
+
+                                <td>
+                                    ₹{trade.exitPrice.toFixed(2)}
                                 </td>
 
                                 <td
                                     className={
-                                        position.pnl >= 0 ? styles.profit : styles.loss
+                                        trade.pnl >= 0
+                                            ? styles.profit
+                                            : styles.loss
                                     }
                                 >
-                                    ₹{formatIndianNumber(position.pnl.toFixed(2))}
+                                    ₹{trade.pnl.toLocaleString("en-IN")}
                                 </td>
-
-                                <td>{formatDateIndian(position.expiry)}</td>
 
                                 <td>
-                                    {position.source === "EXIT" ? "Closed" : "Open"}
+                                    {trade.user?.username}
                                 </td>
+
                             </tr>
+
                         ))}
+
                     </tbody>
+
                 </table>
+
             </div>
 
         </div>
