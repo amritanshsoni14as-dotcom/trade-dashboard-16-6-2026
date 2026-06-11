@@ -385,14 +385,24 @@ export default function TradesPage({
             const avg = Number(pos.averagePrice || 0);
             const current = Number(pos.currentPrice || 0);
             const qty = Number(pos.quantity || 0);
+            const lot_size = Number(pos.lotSize || 0);
 
             let pnl = 0;
 
             if (pos.positionType === "SHORT") {
-                pnl = (avg - current) * qty;
+                pnl = (avg - current) * qty * lot_size;
             } else {
-                pnl = (current - avg) * qty; // LONG default
+                pnl = (current - avg) * qty * lot_size; // LONG default
             }
+
+            /* console.log("========== POSITION ==========");
+            console.log("Script:", pos.script);
+            console.log("Type:", pos.positionType);
+            console.log("Avg:", avg);
+            console.log("Current:", current);
+            console.log("Qty:", qty);
+            console.log("PnL:", pnl);
+            console.log("Running Total:", sum + pnl); */
 
             return sum + pnl;
         },

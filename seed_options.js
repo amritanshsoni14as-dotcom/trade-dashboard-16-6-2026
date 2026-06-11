@@ -9,7 +9,7 @@ import {
     eq
 } from "drizzle-orm";
 
-const EXPIRY_DATE = "2026-04-30";
+const EXPIRY_DATE = "2026-05-27";
 
 const instrumentMap = {
     BEL: {
@@ -244,11 +244,9 @@ export async function importOptionTrades(
 /**
  * TEST DATA
  */
-const rawData = `BEL	400 PE	30.03.2026	-140	16.38	08.04.2026	140	3.44
-BHEL	247.5 PE	30.03.2026	-108	11.45	09.04.2026	108	2.26
-PNB	102 PE	30.03.2026	-94	5.27	09.04.2026	94	1.08
-SAIL	152 PE	02.04.2026	111	5.21	20.04.2026	111	0.5
-NTPC	375 PE	30.03.2026	-128	10.63	13.04.2026	128	3.05
+const rawData = `BHEL	352.5 PE	28.04.2026	-108	16.05	05.05.2026	108	4.29
+PNB	112 PE	28.04.2026	-94	4.31	26.05.2026	47	6.3
+NTPC	407.5 PE	28.04.2026	-128	10.63	26.05.2026	64	18.48
 `;
 
 

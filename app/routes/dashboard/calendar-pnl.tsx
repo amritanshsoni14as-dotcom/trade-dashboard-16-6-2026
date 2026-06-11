@@ -130,7 +130,7 @@ export async function loader() {
         );
     }
 
-    console.log(monthlyPnlsMap);
+    // console.log(monthlyPnlsMap);
 
     return {
         rows,
@@ -240,7 +240,7 @@ export default function CalendarPnL({
         rows,
         monthlyPnls 
     } = loaderData;
-    console.log(monthlyPnls);
+    // console.log(monthlyPnls);
     const weekdays = [
         "Sun",
         "Mon",
