@@ -1,14 +1,74 @@
-/* 1st - Cheerful Light Mode */
-
 .container {
-  min-height: 100vh;
-  /* Soft, warm white background */
-  background: #f9fafb; 
-  /* Deep slate for high contrast and readability */
-  color: #1f2937; 
+    display: flex;
+
+    height: 100vh;
+
+    background: #0b0f14;
+
+    color: #f8fafc;
+}
+
+.content {
+    flex: 1;
+
+    min-width: 0;
+
+    display: flex;
+    flex-direction: column;
+}
+
+.topbar {
+    height: 48px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 0 16px;
+
+    border-bottom: 1px solid #232a33;
+
+    background: #0b0f14;
+}
+
+.market {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    font-size: 12px;
+
+    color: #94a3b8;
+
+    text-transform: uppercase;
+
+    letter-spacing: 0.08em;
+}
+
+.badge {
+    padding: 2px 8px;
+
+    border-radius: 999px;
+
+    background: rgba(0, 200, 83, 0.12);
+
+    border: 1px solid rgba(0, 200, 83, 0.3);
+
+    color: #22d3ee;
+
+    font-size: 11px;
+}
+
+.user {
+    font-size: 13px;
+
+    color: #cbd5e1;
 }
 
 .main {
-  /* margin-left: 240px; */
-  padding: 24px;
+    flex: 1;
+
+    overflow: auto;
+
+    padding: 24px;
 }
