@@ -174,6 +174,30 @@ function getTodayStartIST() {
 }
 
 async function calculatePnL(request: Request) {
+    /**
+ * NOTE FOR FUTURE DEVELOPERS
+ *
+ * This function calculates MTM PnL using:
+ *
+ *     current/settled price - previous day's settlement price
+ *
+ * Therefore it assumes that the entire position quantity existed at the
+ * previous settlement.
+ *
+ * As a result, positions opened today (or quantities added today) will
+ * produce incorrect PnL figures, because they were never held at the
+ * previous settlement price.
+ *
+ * A proper implementation would need to distinguish:
+ *   - Carry-forward quantity
+ *   - Quantity opened today
+ *   - Quantity added/reduced during the session
+ *
+ * At the time of writing, this limitation is known and accepted.
+ *
+ * If you're reading this because a user finally noticed...
+ * good luck, and all the best. 🙂
+ */
 
     const currentUser =
         await requireUser(request);
@@ -460,6 +484,30 @@ async function calculatePnL(request: Request) {
 }
 
 async function calculatePnLForUser(user: User) {
+    /**
+ * NOTE FOR FUTURE DEVELOPERS
+ *
+ * This function calculates MTM PnL using:
+ *
+ *     current/settled price - previous day's settlement price
+ *
+ * Therefore it assumes that the entire position quantity existed at the
+ * previous settlement.
+ *
+ * As a result, positions opened today (or quantities added today) will
+ * produce incorrect PnL figures, because they were never held at the
+ * previous settlement price.
+ *
+ * A proper implementation would need to distinguish:
+ *   - Carry-forward quantity
+ *   - Quantity opened today
+ *   - Quantity added/reduced during the session
+ *
+ * At the time of writing, this limitation is known and accepted.
+ *
+ * If you're reading this because a user finally noticed...
+ * good luck, and all the best. 🙂
+ */
     const todayDate =
         new Date()
             .toISOString()
