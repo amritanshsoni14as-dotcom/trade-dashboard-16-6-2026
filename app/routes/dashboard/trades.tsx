@@ -441,25 +441,7 @@ export default function TradesPage({
     const revalidator =
         useRevalidator();
 
-    /* const futuresTrades = exitTrades.filter((t: any) => t.position?.instrumentType === "FUTURE");
-
-    const optionsTrades = exitTrades.filter((t: any) => t.position?.instrumentType === "OPTIONS");
-
-    const totalPnL = exitTrades.reduce((sum: number, t: any) => {
-        return sum + (t.pnl ?? 0);
-    }, 0); */
-    // useEffect(() => {
-    //     const es = new EventSource("/dashboard/trades/live");
-
-    //     es.onmessage = (event) => {
-    //         const data = JSON.parse(event.data);
-
-    //         setLiveData(data);
-    //     };
-
-    //     return () => es.close();
-    // }, [
-    // ]);
+    
     /*
 =========================
 AUTO REFRESH
