@@ -563,582 +563,6 @@ AUTO REFRESH
                 </div>
             </div>
 
-            {/* ======================
-                FUTURES TABLE
-            ====================== */}
-
-            {/* <section className={styles.section}>
-                <h2 className={styles.sectionTitle}>
-                    Futures
-                </h2>
-
-                {futures.length === 0 ? (
-                    <div className={styles.empty}>
-                        No futures positions
-                    </div>
-                ) : (
-                    <div className={styles.tableWrapper}>
-                        <table className={styles.table}>
-                            <thead>
-                                <tr>
-                                    <th>Symbol</th>
-
-                                    <th>Type</th>
-
-                                    <th>Qty</th>
-
-                                    <th>Avg Price</th>
-
-                                    <th>Current</th>
-
-                                    <th>Exchange</th>
-
-                                    {user.role ===
-                    "admin" && (
-                                        <th>
-                                            User
-                                        </th>
-                                    )}
-                                </tr>
-                            </thead>
-
-                            <tbody>
-                                {futures.map((trade: any) => (
-                                    <tr
-                                        key={
-                                            trade.id
-                                        }
-                                    >
-                                        <td>
-                                            {
-                                                trade.script
-                                            }
-                                        </td>
-
-                                        <td>
-                                            {
-                                                trade.positionType
-                                            }
-                                        </td>
-
-                                        <td>
-                                            {
-                                                trade.quantity
-                                            }
-                                        </td>
-
-                                        <td>
-                                            ₹
-                                            {
-                                                trade.averagePrice
-                                            }
-                                        </td>
-
-                                        <td>
-                                            ₹
-                                            {
-                                                trade.currentPrice
-                                            }
-                                        </td>
-
-                                        <td>
-                                            {
-                                                trade.exchange
-                                            }
-                                        </td>
-
-                                        {user.role ===
-                      "admin" && (
-                                            <td>
-                                                {
-                                                    trade
-                                                        .user
-                                                        ?.username
-                                                }
-                                            </td>
-                                        )}
-                                        <td>
-                                            <button
-                                                className={
-                                                    styles.squareOffBtn
-                                                }
-                                                onClick={() => {
-                                                    (
-                                                        document.getElementById(`dialog-${trade.id}`) as HTMLDialogElement
-                                                    ).showModal();
-                                                }}
-                                            >
-                                                Edit
-                                            </button>
-
-                                            <dialog
-                                                id={`dialog-${trade.id}`}
-                                                className={styles.dialog}
-                                            >
-
-                                                <Form method="post">
-
-                                                    <input
-                                                        type="hidden"
-                                                        name="positionId"
-                                                        value={trade.id}
-                                                    />
-
-                                                    <h3>
-                                                        Edit
-                                                    </h3>
-                                                    <div className={styles.field}>
-                                                        <label>
-                                                            Action
-                                                        </label>
-
-                                                        <select
-                                                            name="actionType"
-                                                            required
-                                                        >
-                                                            <option value="EXIT">
-                                                                Exit
-                                                            </option>
-
-                                                            <option value="AVERAGE">
-                                                                Average
-                                                            </option>
-                                                        </select>
-                                                    </div>
-
-                                                    <div
-                                                        className={styles.field}
-                                                    >
-                                                        <label>
-                                                            Lots
-                                                        </label>
-
-                                                        <input
-                                                            type="number"
-                                                            name="lots"
-                                                            required
-                                                            min="1"
-                                                            max={
-                                                                trade.quantity
-                                                            }
-                                                        />
-                                                    </div>
-
-                                                    <div
-                                                        className={styles.field}
-                                                    >
-                                                        <label>
-                                                            Price
-                                                        </label>
-
-                                                        <input
-                                                            type="number"
-                                                            step="0.01"
-                                                            name="exitPrice"
-                                                            required
-                                                        />
-                                                    </div>
-
-                                                    <div
-                                                        className={
-                                                            styles.dialogActions
-                                                        }
-                                                    >
-                                                        <button
-                                                            type="submit"
-                                                        >
-                                                            Submit
-                                                        </button>
-
-                                                        <button
-                                                            type="button"
-                                                            onClick={() => {
-                                                                (
-                                                                    document.getElementById(`dialog-${trade.id}`) as HTMLDialogElement
-                                                                ).close();
-                                                            }}
-                                                        >
-                                                            Cancel
-                                                        </button>
-                                                    </div>
-
-                                                </Form>
-
-                                            </dialog>
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
-                )}
-            </section> */}
-
-            {/* ======================
-                OPTIONS TABLE
-            ====================== */}
-
-            {/* <section className={styles.section}>
-                <h2 className={styles.sectionTitle}>
-                    Options
-                </h2>
-
-                {options.length === 0 ? (
-                    <div className={styles.empty}>
-                        No options positions
-                    </div>
-                ) : (
-                    <div className={styles.tableWrapper}>
-                        <table className={styles.table}>
-                            <thead>
-                                <tr>
-                                    <th>Symbol</th>
-
-                                    <th>Option</th>
-
-                                    <th>Strike</th>
-
-                                    <th>Qty</th>
-
-                                    <th>Avg Price</th>
-
-                                    <th>Expiry</th>
-
-                                    {user.role ===
-                    "admin" && (
-                                        <th>
-                                            User
-                                        </th>
-                                    )}
-                                </tr>
-                            </thead>
-
-                            <tbody>
-                                {options.map((trade: any) => (
-                                    <tr
-                                        key={
-                                            trade.id
-                                        }
-                                    >
-                                        <td>
-                                            {
-                                                trade.script
-                                            }
-                                        </td>
-
-                                        <td>
-                                            {
-                                                trade.optionType
-                                            }
-                                        </td>
-
-                                        <td>
-                                                
-                                            {
-                                                trade.strikePrice
-                                            }
-                                        </td>
-
-                                        <td>
-                                            {
-                                                trade.quantity
-                                            }
-                                        </td>
-
-                                        <td>
-                                            ₹
-                                            {
-                                                trade.averagePrice
-                                            }
-                                        </td>
-
-                                        <td>
-                                            {
-                                                trade.expiry
-                                            }
-                                        </td>
-
-                                        {user.role ===
-                      "admin" && (
-                                            <td>
-                                                {
-                                                    trade
-                                                        .user
-                                                        ?.username
-                                                }
-                                            </td>
-                                        )}
-
-                                        <td>
-                                            <button
-                                                className={
-                                                    styles.squareOffBtn
-                                                }
-                                                onClick={() => {
-                                                    (
-                                                        document.getElementById(`dialog-${trade.id}`) as HTMLDialogElement
-                                                    ).showModal();
-                                                }}
-                                            >
-                                                Edit
-                                            </button>
-
-                                            <dialog
-                                                id={`dialog-${trade.id}`}
-                                                className={styles.dialog}
-                                            >
-
-                                                <Form method="post">
-
-                                                    <input
-                                                        type="hidden"
-                                                        name="positionId"
-                                                        value={trade.id}
-                                                    />
-
-                                                    <h3>
-                                                        Edit
-                                                    </h3>
-                                                    <div className={styles.field}>
-                                                        <label>
-                                                            Action
-                                                        </label>
-
-                                                        <select
-                                                            name="actionType"
-                                                            required
-                                                        >
-                                                            <option value="EXIT">
-                                                                Exit
-                                                            </option>
-
-                                                            <option value="AVERAGE">
-                                                                Average
-                                                            </option>
-                                                        </select>
-                                                    </div>
-
-                                                    <div
-                                                        className={styles.field}
-                                                    >
-                                                        <label>
-                                                            Lots
-                                                        </label>
-
-                                                        <input
-                                                            type="number"
-                                                            name="lots"
-                                                            required
-                                                            min="1"
-                                                            max={
-                                                                trade.quantity
-                                                            }
-                                                        />
-                                                    </div>
-
-                                                    <div
-                                                        className={styles.field}
-                                                    >
-                                                        <label>
-                                                            Price
-                                                        </label>
-
-                                                        <input
-                                                            type="number"
-                                                            step="0.01"
-                                                            name="exitPrice"
-                                                            required
-                                                        />
-                                                    </div>
-
-                                                    <div
-                                                        className={
-                                                            styles.dialogActions
-                                                        }
-                                                    >
-                                                        <button
-                                                            type="submit"
-                                                        >
-                                                            Submit
-                                                        </button>
-
-                                                        <button
-                                                            type="button"
-                                                            onClick={() => {
-                                                                (
-                                                                    document.getElementById(`dialog-${trade.id}`) as HTMLDialogElement
-                                                                ).close();
-                                                            }}
-                                                        >
-                                                            Cancel
-                                                        </button>
-                                                    </div>
-
-                                                </Form>
-
-                                            </dialog>
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
-                )}
-            </section> */}
-
-            {/* ======================
-    EXIT TRADES TABLE
-====================== */}
-            {/* <div className={styles.totalPnlBox}>
-                <div className={styles.totalPnlLabel}>
-                    TOTAL PNL OF CLOSED TRADES
-                </div>
-
-                <div
-                    className={styles.totalPnlValue}
-                    style={{
-                        color: totalPnL >= 0 ? "green" : "red"
-                    }}
-                >
-                    ₹ {formatIndianNumber(totalPnL.toFixed(2))}
-                </div>
-            </div> */}
-            {/* <section className={styles.section}>
-                <h2 className={styles.sectionTitle}>
-                    Futures Exit Trades
-                </h2>
-
-                {futuresTrades.length === 0 ? (
-                    <div className={styles.empty}>
-                        No futures exit trades
-                    </div>
-                ) : (
-                    <div className={styles.tableWrapper}>
-                        <table className={styles.table}>
-                            <thead>
-                                <tr>
-                                    <th>Symbol</th>
-                                    <th>Qty</th>
-                                    <th>Entry Price</th>
-                                    <th>Exit Price</th>
-                                    <th>PnL</th>
-                                    <th>Expiry</th>
-                                    <th>User</th>
-                                    <th>Date</th>
-                                </tr>
-                            </thead>
-
-                            <tbody>
-                                {futuresTrades.map((t: any) => (
-                                    <tr key={t.id}>
-                                        <td>{t.position?.script}</td>
-                                        <td>{t.quantity}</td>
-
-                                        <td>
-                                            ₹{Number(t.position?.averagePrice).toFixed(2)}
-                                        </td>
-
-                                        <td>₹{Number(t.price).toFixed(2)}</td>
-
-                                        <td
-                                            style={{
-                                                color:
-                                        t.pnl >= 0 ? "green" : "red"
-                                            }}
-                                        >
-                                            ₹{formatIndianNumber(t.pnl.toFixed(2))}
-                                        </td>
-
-                                        <td>
-                                            {t.position?.expiry ?? "-"}
-                                        </td>
-
-                                        <td>{t.user?.username}</td>
-
-                                        <td>
-                                            {new Date(t.createdAt).toLocaleString()}
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
-                )}
-            </section> */}
-
-            {/* <section className={styles.section}>
-                <h2 className={styles.sectionTitle}>
-                    Options Exit Trades
-                </h2>
-
-                {optionsTrades.length === 0 ? (
-                    <div className={styles.empty}>
-                        No options exit trades
-                    </div>
-                ) : (
-                    <div className={styles.tableWrapper}>
-                        <table className={styles.table}>
-                            <thead>
-                                <tr>
-                                    <th>Symbol</th>
-                                    <th>Type</th>
-                                    <th>Strike</th>
-                                    <th>Option</th>
-                                    <th>Qty</th>
-                                    <th>Entry Price</th>
-                                    <th>Exit Price</th>
-                                    <th>PnL</th>
-                                    <th>Expiry</th>
-                                    <th>User</th>
-                                    <th>Date</th>
-                                </tr>
-                            </thead>
-
-                            <tbody>
-                                {optionsTrades.map((t: any) => (
-                                    <tr key={t.id}>
-                                        <td>{t.position?.script}</td>
-
-                                        <td>{t.position?.instrumentType}</td>
-
-                                        <td>{t.position?.strikePrice ?? "-"}</td>
-
-                                        <td>{t.position?.optionType ?? "-"}</td>
-
-                                        <td>{t.quantity}</td>
-
-                                        <td>
-                                            ₹{Number(t.position?.averagePrice).toFixed(2)}
-                                        </td>
-
-                                        <td>₹{Number(t.price).toFixed(2)}</td>
-
-                                        <td
-                                            style={{
-                                                color:
-                                        t.pnl >= 0 ? "green" : "red"
-                                            }}
-                                        >
-                                            ₹{formatIndianNumber(t.pnl.toFixed(2))}
-                                        </td>
-
-                                        <td>
-                                            {t.position?.expiry ?? "-"}
-                                        </td>
-
-                                        <td>{t.user?.username}</td>
-
-                                        <td>
-                                            {new Date(t.createdAt).toLocaleString()}
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
-                )}
-            </section> */}
-
             <h2 className={styles.sectionTitle}>Futures</h2>
 
             <div className={styles.tableWrapper}>
@@ -1322,6 +746,7 @@ AUTO REFRESH
                                     User
                                 </th>
                             )}
+                            <th>Edit</th>
                         </tr>
                     </thead>
 
@@ -1366,6 +791,100 @@ AUTO REFRESH
                                         }
                                     </td>
                                 )}
+                                <td>
+                                    {position.quantity <= 0 ? (
+                                        <span className={styles.zeroQty}>
+                                            0 quantity, no need to edit
+                                        </span>
+                                    ) : (
+                                        <>
+                                            <button
+                                                className={styles.squareOffBtn}
+                                                onClick={() => {
+                                                    (
+                                                        document.getElementById(`dialog-${position.id}`) as HTMLDialogElement
+                                                    ).showModal();
+                                                }}
+                                            >
+                                                Edit
+                                            </button>
+
+                                            <dialog
+                                                id={`dialog-${position.id}`}
+                                                className={styles.dialog}
+                                            >
+                                                <Form method="post">
+
+                                                    <input
+                                                        type="hidden"
+                                                        name="positionId"
+                                                        value={position.id}
+                                                    />
+
+                                                    <h3>Edit Position</h3>
+
+                                                    <div className={styles.field}>
+                                                        <label>Action</label>
+
+                                                        <select
+                                                            name="actionType"
+                                                            required
+                                                        >
+                                                            <option value="EXIT">
+                                                                Exit
+                                                            </option>
+
+                                                            <option value="AVERAGE">
+                                                                Average
+                                                            </option>
+                                                        </select>
+                                                    </div>
+
+                                                    <div className={styles.field}>
+                                                        <label>Lots</label>
+
+                                                        <input
+                                                            type="number"
+                                                            name="lots"
+                                                            min="1"
+                                                            max={position.quantity}
+                                                            required
+                                                        />
+                                                    </div>
+
+                                                    <div className={styles.field}>
+                                                        <label>Price</label>
+
+                                                        <input
+                                                            type="number"
+                                                            step="0.01"
+                                                            name="exitPrice"
+                                                            required
+                                                        />
+                                                    </div>
+
+                                                    <div className={styles.dialogActions}>
+                                                        <button type="submit">
+                                                            Submit
+                                                        </button>
+
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => {
+                                                                (
+                                                                    document.getElementById(`dialog-${position.id}`) as HTMLDialogElement
+                                                                ).close();
+                                                            }}
+                                                        >
+                                                            Cancel
+                                                        </button>
+                                                    </div>
+
+                                                </Form>
+                                            </dialog>
+                                        </>
+                                    )}
+                                </td>
                             </tr>
                         ))}
                     </tbody>
