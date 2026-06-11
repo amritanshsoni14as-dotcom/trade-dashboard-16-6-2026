@@ -70,6 +70,16 @@ export function Navbar() {
                 >
                     👥 Manage Users
                 </NavLink>
+                <NavLink
+                    to="/dashboard/news"
+                    className={({
+                        isActive 
+                    }) =>
+                        `${styles.link} ${isActive ? styles.active : ""}`
+                    }
+                >
+                    📰 News
+                </NavLink>
 
                 <NavLink
                     to="/logout"
