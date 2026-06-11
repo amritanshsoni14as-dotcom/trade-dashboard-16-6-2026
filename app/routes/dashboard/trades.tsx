@@ -118,12 +118,18 @@ export async function loader({
             lotSize
         };
     });
+
+    const futures_2 = intraday_data.positions.filter((p: any) => p.instrumentType === "FUTURE");
+
+    const options_2 = intraday_data.positions.filter((p: any) => p.instrumentType === "OPTIONS");
     return {
         user,
         futures,
         options,
         exitTrades: exitTradesWithPnL,
-        intraday_data
+        intraday_data,
+        futures_2,
+        options_2
     };
 }
 
@@ -169,6 +175,11 @@ export async function action({
 
     if (!position) {
         throw new Error("Position not found");
+    }
+    if (position.quantity <= 0) {
+        return {
+            error: "Position already closed"
+        };
     }
 
     /*
@@ -363,12 +374,26 @@ function formatIndianNumber(num) {
         : formatted;
 }
 
+function formatDateIndian(dateString?: string | null) {
+
+    if (!dateString) {
+        return "-";
+    }
+
+    const date =
+        new Date(dateString);
+
+    return date.toLocaleDateString("en-GB");
+}
+
 export default function TradesPage({
     loaderData
 }: any) {
     const {
         user,
-        intraday_data
+        intraday_data,
+        futures_2,
+        options_2
     } = loaderData;
 
     const futures =
@@ -408,7 +433,7 @@ export default function TradesPage({
         },
         0
     );
-    const exitTrades = loaderData.exitTrades;
+    // const exitTrades = loaderData.exitTrades;
     const totalOpenPositions = futures.length + options.length;
 
     const navigation =
@@ -416,13 +441,13 @@ export default function TradesPage({
     const revalidator =
         useRevalidator();
 
-    const futuresTrades = exitTrades.filter((t: any) => t.position?.instrumentType === "FUTURE");
+    /* const futuresTrades = exitTrades.filter((t: any) => t.position?.instrumentType === "FUTURE");
 
     const optionsTrades = exitTrades.filter((t: any) => t.position?.instrumentType === "OPTIONS");
 
     const totalPnL = exitTrades.reduce((sum: number, t: any) => {
         return sum + (t.pnl ?? 0);
-    }, 0);
+    }, 0); */
     // useEffect(() => {
     //     const es = new EventSource("/dashboard/trades/live");
 
@@ -542,7 +567,7 @@ AUTO REFRESH
                 FUTURES TABLE
             ====================== */}
 
-            <section className={styles.section}>
+            {/* <section className={styles.section}>
                 <h2 className={styles.sectionTitle}>
                     Futures
                 </h2>
@@ -747,13 +772,13 @@ AUTO REFRESH
                         </table>
                     </div>
                 )}
-            </section>
+            </section> */}
 
             {/* ======================
                 OPTIONS TABLE
             ====================== */}
 
-            <section className={styles.section}>
+            {/* <section className={styles.section}>
                 <h2 className={styles.sectionTitle}>
                     Options
                 </h2>
@@ -959,12 +984,12 @@ AUTO REFRESH
                         </table>
                     </div>
                 )}
-            </section>
+            </section> */}
 
             {/* ======================
     EXIT TRADES TABLE
 ====================== */}
-            <div className={styles.totalPnlBox}>
+            {/* <div className={styles.totalPnlBox}>
                 <div className={styles.totalPnlLabel}>
                     TOTAL PNL OF CLOSED TRADES
                 </div>
@@ -977,8 +1002,8 @@ AUTO REFRESH
                 >
                     ₹ {formatIndianNumber(totalPnL.toFixed(2))}
                 </div>
-            </div>
-            <section className={styles.section}>
+            </div> */}
+            {/* <section className={styles.section}>
                 <h2 className={styles.sectionTitle}>
                     Futures Exit Trades
                 </h2>
@@ -1039,9 +1064,9 @@ AUTO REFRESH
                         </table>
                     </div>
                 )}
-            </section>
+            </section> */}
 
-            <section className={styles.section}>
+            {/* <section className={styles.section}>
                 <h2 className={styles.sectionTitle}>
                     Options Exit Trades
                 </h2>
@@ -1112,7 +1137,240 @@ AUTO REFRESH
                         </table>
                     </div>
                 )}
-            </section>
+            </section> */}
+
+            <h2 className={styles.sectionTitle}>Futures</h2>
+
+            <div className={styles.tableWrapper}>
+                <table className={styles.table}>
+                    <thead>
+                        <tr>
+                            <th>Script</th>
+                            <th>Type</th>
+                            <th>Qty</th>
+                            <th>Avg Price</th>
+                            <th>Current</th>
+                            <th>Prev Close</th>
+                            <th>PnL</th>
+                            <th>Expiry</th>
+                            {user.role ===
+                    "admin" && (
+                                <th>
+                                    User
+                                </th>
+                            )}
+                            <th>Edit</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {futures_2.map((position: any) => (
+                            <tr key={position.id}>
+                                <td>{position.script}</td>
+
+                                <td>{position.positionType}</td>
+
+                                <td>{position.quantity}</td>
+
+                                <td>₹{Number(position.averagePrice ?? 0).toFixed(2)}</td>
+
+                                <td>₹{Number(position.currentPrice ?? 0).toFixed(2)}</td>
+
+                                <td>
+                                    ₹{Number(position.previousSettledPrice ?? 0).toFixed(2)}
+                                </td>
+
+                                <td
+                                    className={
+                                        position.pnl >= 0 ? styles.profit : styles.loss
+                                    }
+                                >
+                                    ₹{formatIndianNumber(position.pnl.toFixed(2))}
+                                </td>
+
+                                <td>{formatDateIndian(position.expiry)}</td>
+
+                                {user.role ===
+                      "admin" && (
+                                    <td>
+                                        {
+                                            position
+                                                .user
+                                                ?.username
+                                        }
+                                    </td>
+                                )}
+                                <td>
+                                    {position.quantity <= 0 ? (
+                                        <span className={styles.zeroQty}>
+                                            0 quantity, no need to edit
+                                        </span>
+                                    ) : (
+                                        <>
+                                            <button
+                                                className={styles.squareOffBtn}
+                                                onClick={() => {
+                                                    (
+                                                        document.getElementById(`dialog-${position.id}`) as HTMLDialogElement
+                                                    ).showModal();
+                                                }}
+                                            >
+                                                Edit
+                                            </button>
+
+                                            <dialog
+                                                id={`dialog-${position.id}`}
+                                                className={styles.dialog}
+                                            >
+                                                <Form method="post">
+
+                                                    <input
+                                                        type="hidden"
+                                                        name="positionId"
+                                                        value={position.id}
+                                                    />
+
+                                                    <h3>Edit Position</h3>
+
+                                                    <div className={styles.field}>
+                                                        <label>Action</label>
+
+                                                        <select
+                                                            name="actionType"
+                                                            required
+                                                        >
+                                                            <option value="EXIT">
+                                                                Exit
+                                                            </option>
+
+                                                            <option value="AVERAGE">
+                                                                Average
+                                                            </option>
+                                                        </select>
+                                                    </div>
+
+                                                    <div className={styles.field}>
+                                                        <label>Lots</label>
+
+                                                        <input
+                                                            type="number"
+                                                            name="lots"
+                                                            min="1"
+                                                            max={position.quantity}
+                                                            required
+                                                        />
+                                                    </div>
+
+                                                    <div className={styles.field}>
+                                                        <label>Price</label>
+
+                                                        <input
+                                                            type="number"
+                                                            step="0.01"
+                                                            name="exitPrice"
+                                                            required
+                                                        />
+                                                    </div>
+
+                                                    <div className={styles.dialogActions}>
+                                                        <button type="submit">
+                                                            Submit
+                                                        </button>
+
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => {
+                                                                (
+                                                                    document.getElementById(`dialog-${position.id}`) as HTMLDialogElement
+                                                                ).close();
+                                                            }}
+                                                        >
+                                                            Cancel
+                                                        </button>
+                                                    </div>
+
+                                                </Form>
+                                            </dialog>
+                                        </>
+                                    )}
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
+
+            <h2 className={styles.sectionTitle}>Options</h2>
+
+            <div className={styles.tableWrapper}>
+                <table className={styles.table}>
+                    <thead>
+                        <tr>
+                            <th>Script</th>
+                            <th>Type</th>
+                            <th>Strike</th>
+                            <th>Option</th>
+                            <th>Qty</th>
+                            <th>Avg Price</th>
+                            <th>Current</th>
+                            <th>Prev Close</th>
+                            <th>PnL</th>
+                            <th>Expiry</th>
+                            {user.role ===
+                    "admin" && (
+                                <th>
+                                    User
+                                </th>
+                            )}
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {options_2.map((position: any) => (
+                            <tr key={position.id}>
+                                <td>{position.script}</td>
+
+                                <td>{position.positionType}</td>
+
+                                <td>{position.strikePrice ?? "-"}</td>
+
+                                <td>{position.optionType ?? "-"}</td>
+
+                                <td>{position.quantity}</td>
+
+                                <td>₹{Number(position.averagePrice ?? 0).toFixed(2)}</td>
+
+                                <td>₹{Number(position.currentPrice ?? 0).toFixed(2)}</td>
+
+                                <td>
+                                    ₹{Number(position.previousSettledPrice ?? 0).toFixed(2)}
+                                </td>
+
+                                <td
+                                    className={
+                                        position.pnl >= 0 ? styles.profit : styles.loss
+                                    }
+                                >
+                                    ₹{formatIndianNumber(position.pnl.toFixed(2))}
+                                </td>
+
+                                <td>{formatDateIndian(position.expiry)}</td>
+
+                                {user.role ===
+                      "admin" && (
+                                    <td>
+                                        {
+                                            position
+                                                .user
+                                                ?.username
+                                        }
+                                    </td>
+                                )}
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
         </div>
     );
 }
