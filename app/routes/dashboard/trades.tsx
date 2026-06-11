@@ -518,7 +518,7 @@ AUTO REFRESH
                         color: intraday_data.totalPnL >= 0 ? "green" : "red"
                     }}>
                         {/* same value for now */}
-                        {formatIndianNumber(intraday_data.totalPnL.toFixed(2))}
+                        ₹ {formatIndianNumber(intraday_data.totalPnL.toFixed(2))}
                     </div>
                 </div>
             </div>

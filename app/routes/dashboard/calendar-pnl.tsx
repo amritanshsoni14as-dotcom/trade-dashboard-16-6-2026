@@ -427,7 +427,7 @@ export default function CalendarPnL({
                                 </div> */}
 
                                 <div className={styles.pnl}>
-                                    ₹ {pnl.toFixed(0)}
+                                    ₹ {formatIndianNumber(pnl.toFixed(0))}
                                 </div>
                             </div>
                         );
