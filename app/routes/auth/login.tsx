@@ -71,12 +71,20 @@ export default function LoginPage() {
     return (
         <div className={styles.page}>
             <div className={styles.card}>
+                <div className={styles.brand}>
+                    <div className={styles.dot} />
+
+                    <span>
+                        Trading Ops
+                    </span>
+                </div>
+
                 <h1 className={styles.title}>
-                    Welcome Back
+                    Sign in
                 </h1>
 
                 <p className={styles.subtitle}>
-                    Login to continue
+                    Internal terminal — authorised users only.
                 </p>
 
                 {actionData?.error && (
@@ -97,7 +105,7 @@ export default function LoginPage() {
                         <input
                             type="text"
                             name="username"
-                            placeholder="Enter username"
+                            placeholder="Username"
                         />
                     </div>
 
@@ -109,7 +117,7 @@ export default function LoginPage() {
                         <input
                             type="password"
                             name="password"
-                            placeholder="Enter password"
+                            placeholder="Password"
                         />
                     </div>
 
@@ -117,7 +125,7 @@ export default function LoginPage() {
                         type="submit"
                         className={styles.button}
                     >
-                        Login
+                        Sign In
                     </button>
                 </Form>
             </div>
