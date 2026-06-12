@@ -29,6 +29,164 @@ import {
 import {
     calculatePnL
 } from "~/database/utils.server";
+import {
+    calculateOpenPositionExpiryPnL 
+} from "./calendar-pnl";
+
+function calculateCurrentAndNextMonthPnL(
+    exitTradesWithPnL: any[],
+    openPositions: any[]
+) {
+    const now = new Date();
+
+    const currentYear =
+        now.getFullYear();
+
+    const currentMonth =
+        now.getMonth();
+
+    const nextMonthDate =
+        new Date(
+            currentYear,
+            currentMonth + 1,
+            1
+        );
+
+    const nextYear =
+        nextMonthDate.getFullYear();
+
+    const nextMonth =
+        nextMonthDate.getMonth();
+
+    let currentMonthPnL = 0;
+
+    let nextMonthPnL = 0;
+
+    /*
+    =========================
+    EXIT TRADES
+    =========================
+    */
+
+    for (const trade of exitTradesWithPnL) {
+
+        const expiry =
+            trade.position?.expiry;
+
+        if (!expiry) {
+            continue;
+        }
+
+        const expiryDate =
+            new Date(`${expiry}T00:00:00`);
+
+        const year =
+            expiryDate.getFullYear();
+
+        const month =
+            expiryDate.getMonth();
+
+        if (
+            year === currentYear &&
+            month === currentMonth
+        ) {
+            currentMonthPnL +=
+                trade.pnl ?? 0;
+        }
+
+        if (
+            year === nextYear &&
+            month === nextMonth
+        ) {
+            nextMonthPnL +=
+                trade.pnl ?? 0;
+        }
+    }
+
+    /*
+    =========================
+    OPEN POSITIONS
+    =========================
+    */
+
+    for (const position of openPositions) {
+
+        if (!position.expiry) {
+            continue;
+        }
+
+        const expiryDate =
+            new Date(`${position.expiry}T00:00:00`);
+
+        const year =
+            expiryDate.getFullYear();
+
+        const month =
+            expiryDate.getMonth();
+
+        const pnl =
+            calculateOpenPositionExpiryPnL(position);
+
+        if (
+            year === currentYear &&
+            month === currentMonth
+        ) {
+            currentMonthPnL += pnl;
+        }
+
+        /*
+        For next month we can't use
+        calculateOpenPositionExpiryPnL()
+        because that function returns 0
+        unless expiry is in the current month.
+        */
+
+        if (
+            year === nextYear &&
+            month === nextMonth
+        ) {
+
+            const qty =
+                Number(position.quantity ?? 0);
+
+            const settled =
+                Number(position.previousSettledPrice ?? 0);
+
+            const average =
+                Number(position.entryPrice ?? 0);
+
+            const lotSize =
+                Number(position.lotSize ?? 1);
+
+            let pnl = 0;
+
+            if (
+                position.positionType ===
+                "LONG"
+            ) {
+                pnl =
+                    (settled - average) *
+                    qty *
+                    lotSize;
+            } else {
+                pnl =
+                    (average - settled) *
+                    qty *
+                    lotSize;
+            }
+
+            nextMonthPnL += pnl;
+        }
+    }
+
+    return {
+        currentMonthPnL:
+            Number(currentMonthPnL.toFixed(2)),
+
+        nextMonthPnL:
+            Number(nextMonthPnL.toFixed(2))
+    };
+}
 
 export async function loader({
     request
@@ -118,6 +276,21 @@ export async function loader({
             lotSize
         };
     });
+    const openPositions =
+        await db.query.positions.findMany({
+            where: (table, {
+                gt 
+            }) =>
+                gt(table.quantity, 0)
+        });
+
+    const {
+        currentMonthPnL,
+        nextMonthPnL
+    } = calculateCurrentAndNextMonthPnL(
+        exitTradesWithPnL,
+        openPositions
+    );
 
     const futures_2 = intraday_data.positions.filter((p: any) => p.instrumentType === "FUTURE");
 
@@ -129,7 +302,9 @@ export async function loader({
         exitTrades: exitTradesWithPnL,
         intraday_data,
         futures_2,
-        options_2
+        options_2,
+        currentMonthPnL,
+        nextMonthPnL
     };
 }
 
@@ -393,7 +568,9 @@ export default function TradesPage({
         user,
         intraday_data,
         futures_2,
-        options_2
+        options_2,
+        currentMonthPnL,
+        nextMonthPnL
     } = loaderData;
 
     const futures =
@@ -543,6 +720,38 @@ AUTO REFRESH
                         }`}
                     >
                         ₹ {formatIndianNumber(openPnL.toFixed(2))}
+                    </div>
+                </div>
+
+            </div>
+
+            <div className={styles.kpiGrid}>
+
+                <div className={styles.kpiCard}>
+                    <div className={styles.kpiLabel}>
+                        Current Month Pnl
+                    </div>
+
+                    <div className={`${styles.kpiValue} ${currentMonthPnL >= 0
+                        ? styles.profit
+                        : styles.loss
+                    }`}>
+                        ₹ {formatIndianNumber(currentMonthPnL.toFixed(2))}
+                    </div>
+                </div>
+
+                <div className={styles.kpiCard}>
+                    <div className={styles.kpiLabel}>
+                        Next Month PnL
+                    </div>
+
+                    <div
+                        className={`${styles.kpiValue} ${nextMonthPnL >= 0
+                            ? styles.profit
+                            : styles.loss
+                        }`}
+                    >
+                        ₹ {formatIndianNumber(nextMonthPnL.toFixed(2))}
                     </div>
                 </div>
 

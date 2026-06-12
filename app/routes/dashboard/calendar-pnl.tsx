@@ -22,6 +22,161 @@ import {
    LOADER
 ========================= */
 
+function calculateCurrentAndNextMonthPnL(
+    exitTradesWithPnL: any[],
+    openPositions: any[]
+) {
+    const now = new Date();
+
+    const currentYear =
+        now.getFullYear();
+
+    const currentMonth =
+        now.getMonth();
+
+    const nextMonthDate =
+        new Date(
+            currentYear,
+            currentMonth + 1,
+            1
+        );
+
+    const nextYear =
+        nextMonthDate.getFullYear();
+
+    const nextMonth =
+        nextMonthDate.getMonth();
+
+    let currentMonthPnL = 0;
+
+    let nextMonthPnL = 0;
+
+    /*
+    =========================
+    EXIT TRADES
+    =========================
+    */
+
+    for (const trade of exitTradesWithPnL) {
+
+        const expiry =
+            trade.position?.expiry;
+
+        if (!expiry) {
+            continue;
+        }
+
+        const expiryDate =
+            new Date(`${expiry}T00:00:00`);
+
+        const year =
+            expiryDate.getFullYear();
+
+        const month =
+            expiryDate.getMonth();
+
+        if (
+            year === currentYear &&
+            month === currentMonth
+        ) {
+            currentMonthPnL +=
+                trade.pnl ?? 0;
+        }
+
+        if (
+            year === nextYear &&
+            month === nextMonth
+        ) {
+            nextMonthPnL +=
+                trade.pnl ?? 0;
+        }
+    }
+
+    /*
+    =========================
+    OPEN POSITIONS
+    =========================
+    */
+
+    for (const position of openPositions) {
+
+        if (!position.expiry) {
+            continue;
+        }
+
+        const expiryDate =
+            new Date(`${position.expiry}T00:00:00`);
+
+        const year =
+            expiryDate.getFullYear();
+
+        const month =
+            expiryDate.getMonth();
+
+        const pnl =
+            calculateOpenPositionExpiryPnL(position);
+
+        if (
+            year === currentYear &&
+            month === currentMonth
+        ) {
+            currentMonthPnL += pnl;
+        }
+
+        /*
+        For next month we can't use
+        calculateOpenPositionExpiryPnL()
+        because that function returns 0
+        unless expiry is in the current month.
+        */
+
+        if (
+            year === nextYear &&
+            month === nextMonth
+        ) {
+
+            const qty =
+                Number(position.quantity ?? 0);
+
+            const settled =
+                Number(position.previousSettledPrice ?? 0);
+
+            const average =
+                Number(position.entryPrice ?? 0);
+
+            const lotSize =
+                Number(position.lotSize ?? 1);
+
+            let pnl = 0;
+
+            if (
+                position.positionType ===
+                "LONG"
+            ) {
+                pnl =
+                    (settled - average) *
+                    qty *
+                    lotSize;
+            } else {
+                pnl =
+                    (average - settled) *
+                    qty *
+                    lotSize;
+            }
+
+            nextMonthPnL += pnl;
+        }
+    }
+
+    return {
+        currentMonthPnL:
+            Number(currentMonthPnL.toFixed(2)),
+
+        nextMonthPnL:
+            Number(nextMonthPnL.toFixed(2))
+    };
+}
+
 export async function loader() {
     const rows = await db.query.dailyPnls.findMany({
         with: {
@@ -173,7 +328,7 @@ function getMonthRange(date: Date) {
     };
 }
 
-function calculateOpenPositionExpiryPnL(position: any) {
+export function calculateOpenPositionExpiryPnL(position: any) {
     if (!position) return 0;
 
     const qty =

@@ -11,7 +11,9 @@ import PnLPieChart, {
 import PnLBarChart, {
     PnLBarChartScript 
 } from "~/components/charts/barchart";
-import { useState } from "react";
+import {
+    useState 
+} from "react";
 
 export async function loader({
     request
@@ -196,16 +198,15 @@ export default function ExitTradesPage({
             Math.abs(b.pnl) -
         Math.abs(a.pnl));
 
+    const [
+        showFutures,
+        setShowFutures
+    ] = useState(false);
 
     const [
-    showFutures,
-    setShowFutures
-] = useState(false);
-
-const [
-    showOptions,
-    setShowOptions
-] = useState(false);
+        showOptions,
+        setShowOptions
+    ] = useState(false);
 
     return (
         <div className={styles.page}>
@@ -337,25 +338,23 @@ const [
             </div>
 
             <div className={styles.sectionHeader}>
-    <h2 className={styles.sectionTitle}>
-        Futures
-    </h2>
+                <h2 className={styles.sectionTitle}>
+                    Futures
+                </h2>
 
-    <button
-        className={styles.toggleButton}
-        onClick={() =>
-            setShowFutures(
-                !showFutures
-            )
-        }
-    >
-        {
-            showFutures
-                ? "Hide"
-                : "Show"
-        }
-    </button>
-</div>
+                <button
+                    className={styles.toggleButton}
+                    onClick={() =>
+                        setShowFutures(!showFutures)
+                    }
+                >
+                    {
+                        showFutures
+                            ? "Hide"
+                            : "Show"
+                    }
+                </button>
+            </div>
             {showFutures && (<div className={styles.tableWrapper}>
 
                 <table className={styles.table}>
@@ -429,25 +428,23 @@ const [
 
             </div>)}
             <div className={styles.sectionHeader}>
-    <h2 className={styles.sectionTitle}>
-        Options
-    </h2>
+                <h2 className={styles.sectionTitle}>
+                    Options
+                </h2>
 
-    <button
-        className={styles.toggleButton}
-        onClick={() =>
-            setShowOptions(
-                !showOptions
-            )
-        }
-    >
-        {
-            showOptions
-                ? "Hide"
-                : "Show"
-        }
-    </button>
-</div>
+                <button
+                    className={styles.toggleButton}
+                    onClick={() =>
+                        setShowOptions(!showOptions)
+                    }
+                >
+                    {
+                        showOptions
+                            ? "Hide"
+                            : "Show"
+                    }
+                </button>
+            </div>
             {showOptions && (<div className={styles.tableWrapper}>
 
                 <table className={styles.table}>
