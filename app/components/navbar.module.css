@@ -87,3 +87,55 @@
 
     color: #64748b;
 }
+
+
+
+
+
+/* ====================================
+   MOBILE
+==================================== */
+
+@media (max-width: 768px) {
+    .sidebar {
+        width: 100%;
+
+        flex-direction: row;
+        align-items: center;
+
+        overflow-x: auto;
+
+        border-right: none;
+        border-bottom: 1px solid #232a33;
+    }
+
+    .logo {
+        flex-shrink: 0;
+
+        border-bottom: none;
+        border-right: 1px solid #232a33;
+    }
+
+    .links {
+        flex-direction: row;
+
+        flex: 1;
+
+        overflow-x: auto;
+
+        padding: 8px;
+
+        gap: 6px;
+
+        white-space: nowrap;
+    }
+
+    .link {
+        flex-shrink: 0;
+    }
+
+    .footer {
+        display: none;
+    }
+}
+

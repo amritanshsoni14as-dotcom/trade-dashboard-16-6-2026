@@ -13,6 +13,39 @@ html {
   -webkit-text-size-adjust: 100%; /* 2 */
 }
 
+/* #E1E5EB, #1F242E */
+:root {
+    --bg-dashboard: #F7F8FA;
+    --surface: white;
+    --surface-2: #e2e8f0;
+
+    --text: #0f172a;
+    --text-muted: #64748b;
+
+    --accent: #0891B2;
+    --hover-rows: #EEF1F5;
+    --table-border: #E1E5EB;
+}
+
+[data-theme="dark"] {
+    --bg-dashboard: #0A0C10;
+    --surface: #11141B;
+    --surface-2: #232a33;
+
+    --text: #f8fafc;
+    --text-muted: #94a3b8;
+
+    --accent: #22d3ee;
+    --hover-rows: #171b24;
+    --table-border: #1F242E;
+}
+
+
+
+
+
+
+
 /* Sections
    ========================================================================== */
 

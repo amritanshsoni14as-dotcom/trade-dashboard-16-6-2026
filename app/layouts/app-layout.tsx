@@ -11,6 +11,7 @@ import styles from "./app-layout.module.css";
 import {
     requireUser 
 } from "~/utils/auth.server";
+import { useEffect, useState } from "react";
 
 export async function loader({
     request 
@@ -26,8 +27,47 @@ export default function AppLayout({
     loaderData
 }: any) {
     const {
-        user 
+        user
     } = loaderData;
+
+    const [
+        theme,
+        setTheme
+    ] = useState("light");
+
+    useEffect(() => {
+        const saved =
+            localStorage.getItem("theme");
+
+        const initialTheme =
+            saved || "light";
+
+        setTheme(initialTheme);
+
+        document.documentElement.setAttribute(
+            "data-theme",
+            initialTheme
+        );
+    }, []);
+
+    function toggleTheme() {
+        const nextTheme =
+            theme === "dark"
+                ? "light"
+                : "dark";
+
+        setTheme(nextTheme);
+
+        document.documentElement.setAttribute(
+            "data-theme",
+            nextTheme
+        );
+
+        localStorage.setItem(
+            "theme",
+            nextTheme
+        );
+    }
 
     return (
         <div className={styles.container}>
@@ -36,17 +76,36 @@ export default function AppLayout({
             <div className={styles.content}>
                 <header className={styles.topbar}>
                     <div className={styles.market}>
-                        <span>
+                        {/* <span>
                             Market Data
                         </span>
 
                         <div className={styles.badge}>
                             LIVE
-                        </div>
+                        </div> */}
+                        {user.username}
                     </div>
 
-                    <div className={styles.user}>
-                        {user.username}
+                    <div
+                        style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "12px"
+                        }}
+                    >
+                        <button
+                            onClick={toggleTheme}
+                        >
+                            {
+                                theme === "dark"
+                                    ? "☀️"
+                                    : "🌙"
+                            }
+                        </button>
+
+                        {/* <div className={styles.user}>
+                            {user.username}
+                        </div> */}
                     </div>
                 </header>
 

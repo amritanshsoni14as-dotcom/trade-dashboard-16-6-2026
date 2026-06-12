@@ -2,7 +2,7 @@
     padding: 24px;
     min-height: 100vh;
 
-    background: #0a0c10;
+    background: var(--bg-dashboard);
 }
 
 /* =========================
@@ -113,9 +113,9 @@
 }
 
 .kpiCard {
-    background: #11141b;
+    background: var(--surface);
 
-    border: 1px solid #1f2530;
+    border: 1px solid var(--table-border);
 
     border-radius: 18px;
 
@@ -126,6 +126,7 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
+    
 }
 
 .kpiLabel {
@@ -145,7 +146,7 @@
 
     font-weight: 700;
 
-    color: #ffffff;
+    color: var(--text);
 
     line-height: 1.1;
 }
@@ -176,7 +177,7 @@
     margin-top: 28px;
     margin-bottom: 12px;
 
-    color: #0f172a;
+    color: var(--text);
 
     font-size: 18px;
 
@@ -196,7 +197,7 @@
 
     background: #11141b;
 
-    border: 1px solid #1f242e;
+    border: 1px solid var(--table-border);
 
     border-radius: 18px;
 }
@@ -205,11 +206,11 @@
     width: 100%;
     border-collapse: collapse;
 
-    background: #11141b;
+    background: var(--surface);
 }
 
 .table thead {
-    background: #11141b;
+    background: var(--surface);
 }
 
 .table th {
@@ -233,7 +234,7 @@
 .table td {
     padding: 1rem;
 
-    color: #ffffff;
+    color: var(--text);
 
     font-size: 20px;
 
@@ -244,8 +245,16 @@
     border-bottom: none;
 }
 
+.table tbody td {
+    border-color: var(--table-border);
+}
+
+.table thead th {
+    border-color: var(--table-border);
+}
+
 .table tbody tr:hover {
-    background: #171b24;
+    background: var(--hover-rows);
 }
 
 /* =========================
@@ -259,7 +268,7 @@
 
     padding: 8px 14px;
 
-    background: rgb(34, 211, 238);
+    background: var(--accent);
 
     color: black;
 
