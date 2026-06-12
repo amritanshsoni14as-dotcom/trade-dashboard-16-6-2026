@@ -5,6 +5,8 @@ import styles from "./mtm.module.css";
 import {
     db 
 } from "~/database/db.server";
+import PnLPieChart from "~/components/charts/piechart";
+import PnLBarChart from "~/components/charts/barchart";
 
 export async function loader({
     request
@@ -109,6 +111,18 @@ export async function loader({
     };
 }
 
+function formatDateIndian(dateString?: string | null) {
+
+    if (!dateString) {
+        return "-";
+    }
+
+    const date =
+        new Date(dateString);
+
+    return date.toLocaleDateString("en-GB");
+}
+
 export default function ExitTradesPage({
     loaderData
 }: any) {
@@ -131,6 +145,24 @@ export default function ExitTradesPage({
 
     const optionTrades = exitTrades.filter((t: any) =>
         t.position?.instrumentType === "OPTIONS");
+
+    const futuresPnL = futureTrades.reduce(
+        (sum: number, trade: any) =>
+            sum + (trade.pnl ?? 0),
+        0
+    );
+
+    const optionsPnL = optionTrades.reduce(
+        (sum: number, trade: any) =>
+            sum + (trade.pnl ?? 0),
+        0
+    );
+
+    const futuresContribution =
+        Math.abs(futuresPnL);
+
+    const optionsContribution =
+        Math.abs(optionsPnL);
 
     return (
         <div className={styles.page}>
@@ -197,6 +229,14 @@ export default function ExitTradesPage({
 
             </div>
 
+            <div>
+                <PnLPieChart
+                    futuresPnL={futuresContribution}
+                    optionsPnL={optionsContribution}
+                />
+                <PnLBarChart futuresPnL={futuresPnL} optionsPnL={optionsPnL} />
+            </div>
+
             <h2 className={styles.sectionTitle}>
                 Futures
             </h2>
@@ -209,6 +249,7 @@ export default function ExitTradesPage({
                             <th>Script</th>
                             <th>Type</th>
                             <th>Qty</th>
+                            <th>Expiry Date</th>
                             <th>Lot Size</th>
                             <th>Avg Price</th>
                             <th>Exit Price</th>
@@ -234,6 +275,7 @@ export default function ExitTradesPage({
                                 <td>
                                     {trade.qty}
                                 </td>
+                                <td>{formatDateIndian(trade.position?.expiry)}</td>
 
                                 <td>
                                     {trade.lotSize}

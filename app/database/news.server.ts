@@ -50,7 +50,7 @@ function stripHtml(s: string | null): string | null {
         .replace(/<[^>]*>/g, "")
         .replace(/&nbsp;/g, " ")
         .replace(/&amp;/g, "&")
-        .replace(/&quot;/g, '"')
+        .replace(/&quot;/g, "\"")
         .replace(/&#39;/g, "'")
         .replace(/&lt;/g, "<")
         .replace(/&gt;/g, ">")
@@ -58,7 +58,8 @@ function stripHtml(s: string | null): string | null {
 }
 
 function parseRss(xml: string, symbol: string): NewsItem[] {
-    const items: NewsItem[] = [];
+    const items: NewsItem[] = [
+    ];
     const itemRegex = /<item>([\s\S]*?)<\/item>/g;
     let match: RegExpExecArray | null;
 
@@ -96,34 +97,38 @@ export async function fetchSymbolNews(
     limit = 12
 ): Promise<NewsItem[]> {
     const query = buildQuery(symbol, companyName);
-    const url = `${FEED_URL}?q=${encodeURIComponent(
-        query
-    )}&hl=en-IN&gl=IN&ceid=IN:en`;
+    const url = `${FEED_URL}?q=${encodeURIComponent(query)}&hl=en-IN&gl=IN&ceid=IN:en`;
 
     try {
         const res = await fetch(url, {
-            headers: { Accept: "application/rss+xml,application/xml" },
+            headers: {
+                Accept: "application/rss+xml,application/xml" 
+            }
             // next: { revalidate: 900 } // 15 min
         });
-        if (!res.ok) return [];
+        if (!res.ok) return [
+        ];
         const xml = await res.text();
         return parseRss(xml, symbol).slice(0, limit);
     } catch {
-        return [];
+        return [
+        ];
     }
 }
 
 export async function fetchNewsForSymbols(
-    pairs: Array<{ symbol: string; companyName?: string | null }>,
+    pairs: Array<{
+        symbol: string;
+        companyName?: string | null 
+    }>,
     perSymbol = 6
 ): Promise<NewsItem[]> {
-    const results = await Promise.all(
-        pairs.map((p) => fetchSymbolNews(p.symbol, p.companyName, perSymbol))
-    );
+    const results = await Promise.all(pairs.map((p) => fetchSymbolNews(p.symbol, p.companyName, perSymbol)));
 
     // Flatten + dedup by link, sort by recency.
     const seen = new Set<string>();
-    const merged: NewsItem[] = [];
+    const merged: NewsItem[] = [
+    ];
     for (const list of results) {
         for (const item of list) {
             if (seen.has(item.link)) continue;

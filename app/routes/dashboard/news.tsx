@@ -1,25 +1,37 @@
-import { useEffect } from "react";
-import { useLoaderData, useRevalidator } from "react-router";
-import { db } from "~/database/db.server";
-import { fetchNewsForSymbols } from "~/database/news.server";
-import { requireUser } from "~/utils/auth.server";
-import styles from "./news.module.css"
+import {
+    useEffect 
+} from "react";
+import {
+    useLoaderData, useRevalidator 
+} from "react-router";
+import {
+    db 
+} from "~/database/db.server";
+import {
+    fetchNewsForSymbols 
+} from "~/database/news.server";
+import {
+    requireUser 
+} from "~/utils/auth.server";
+import styles from "./news.module.css";
 
-export async function loader({ request }: any) {
+export async function loader({
+    request 
+}: any) {
     const user = await requireUser(request);
 
     const positions =
         await db.query.positions.findMany({
-            where: (table, { gt }) =>
+            where: (table, {
+                gt 
+            }) =>
                 gt(table.quantity, 0)
         });
 
     const symbols = [
-        ...new Set(
-            positions.map((p: any) => ({
-                symbol: p.script
-            }))
-        )
+        ...new Set(positions.map((p: any) => ({
+            symbol: p.script
+        })))
     ];
 
     const news =
@@ -31,7 +43,6 @@ export async function loader({ request }: any) {
         trackedSymbols: symbols.length
     };
 }
-
 
 export default function NewsPage() {
     const {
@@ -55,7 +66,9 @@ export default function NewsPage() {
         return () =>
             clearInterval(interval);
 
-    }, [revalidator]);
+    }, [
+        revalidator
+    ]);
 
     return (
         <div className={styles.page}>
@@ -133,9 +146,7 @@ export default function NewsPage() {
 
                                 <td>
                                     {item.publishedAt
-                                        ? new Date(
-                                            item.publishedAt
-                                        ).toLocaleString("en-IN")
+                                        ? new Date(item.publishedAt).toLocaleString("en-IN")
                                         : "-"}
                                 </td>
 

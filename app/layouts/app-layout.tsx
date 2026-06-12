@@ -11,7 +11,9 @@ import styles from "./app-layout.module.css";
 import {
     requireUser 
 } from "~/utils/auth.server";
-import { useEffect, useState } from "react";
+import {
+    useEffect, useState 
+} from "react";
 
 export async function loader({
     request 
@@ -48,7 +50,8 @@ export default function AppLayout({
             "data-theme",
             initialTheme
         );
-    }, []);
+    }, [
+    ]);
 
     function toggleTheme() {
         const nextTheme =
