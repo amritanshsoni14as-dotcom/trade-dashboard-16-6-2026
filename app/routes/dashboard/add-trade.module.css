@@ -15,7 +15,7 @@
     font-size: 2rem;
     font-weight: 700;
 
-    color: #ffffff;
+    color: var(--text);
 }
 
 /* =========================
@@ -23,9 +23,9 @@
 ========================= */
 
 .form {
-    background: #11141b;
+    background: var(--surface);
 
-    border: 1px solid #1f242e;
+    border: 1px solid var(--table-border);
 
     border-radius: 20px;
 
@@ -54,7 +54,7 @@
 }
 
 .field label {
-    color: #9097a4;
+    color: var(--text-muted);
 
     font-size: 13px;
 
@@ -79,9 +79,9 @@
 
     border: 1px solid #1f242e;
 
-    background: #0d1016;
+    background: var(--bg-dashboard);
 
-    color: #ffffff;
+    color: var(--text);
 
     font-size: 14px;
 

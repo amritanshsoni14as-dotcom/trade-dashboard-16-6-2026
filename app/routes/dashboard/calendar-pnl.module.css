@@ -4,12 +4,7 @@
     padding: 32px;
     min-height: 100vh;
 
-    background:
-        linear-gradient(
-            to bottom,
-            #f8fbff,
-            #eef6ff
-        );
+    background: var(--bg-dashboard);
 
     color: #1e293b;
 }
@@ -20,7 +15,7 @@
 
     margin-bottom: 40px;
 
-    color: #2563eb;
+    color: var(--accent);
 }
 
 .monthSection {
@@ -33,7 +28,7 @@
 
     margin-bottom: 20px;
 
-    color: #334155;
+    color: var(--text-muted);
 }
 
 .weekdays {
@@ -52,7 +47,7 @@
 
     font-weight: 600;
 
-    color: #64748b;
+    color: var(--text-muted);
 }
 
 .grid {
@@ -66,14 +61,15 @@
 
 .card {
     min-height: 110px;
+    /* background-color: var(--surface); */
 
     border-radius: 18px;
 
     padding: 14px;
 
-    background: white;
-
-    border: 1px solid #dbeafe;
+    background: var(--surface);
+    color: var(--text);
+    border: 1px solid var(--table-border);
 
     box-shadow:
         0 4px 12px rgba(37, 99, 235, 0.08);
@@ -165,11 +161,13 @@
 
 .monthPnlBoxProfit {
     border-color: #16a34a;
+    color: #16a34a;
     background: rgba(22, 163, 74, 0.08);
 }
 
 .monthPnlBoxLoss {
     border-color: #dc2626;
+    color: #dc2626;
     background: rgba(220, 38, 38, 0.08);
 }
 

@@ -1,7 +1,7 @@
 .page {
     padding: 24px;
     min-height: 100vh;
-    background: #0a0c10;
+    background: var(--bg-dashboard);
 }
 
 /* HEADER */
@@ -12,14 +12,14 @@
 
 .header h1 {
     margin: 0;
-    color: #ffffff;
+    color: var(--text);
     font-size: 2rem;
     font-weight: 700;
 }
 
 .header p {
     margin-top: 6px;
-    color: #9097a4;
+    color: var(--text-muted);
 }
 
 /* KPI */
@@ -32,7 +32,7 @@
 }
 
 .kpiCard {
-    background: #11141b;
+    background: var(--surface);
 
     border: 1px solid #1f242e;
 
@@ -42,7 +42,7 @@
 }
 
 .kpiLabel {
-    color: #9097a4;
+    color: var(--text-muted);
 
     font-size: 12px;
 
@@ -54,7 +54,7 @@
 }
 
 .kpiValue {
-    color: white;
+    color: var(--text);
 
     font-size: 32px;
 
@@ -64,9 +64,9 @@
 /* TABLE */
 
 .tableWrapper {
-    background: #11141b;
+    background: var(--surface);
 
-    border: 1px solid #1f242e;
+    border: 1px solid var(--table-border);
 
     border-radius: 18px;
 
@@ -79,7 +79,7 @@
 }
 
 .table th {
-    color: #9097a4;
+    color: var(--text-muted);
 
     font-size: 12px;
 
@@ -95,7 +95,7 @@
 }
 
 .table td {
-    color: white;
+    color: var(--text);
 
     padding: 16px;
 
@@ -105,17 +105,27 @@
 }
 
 .table tbody tr:hover {
-    background: #171b24;
+    background: var(--hover-rows);
 }
 
 .table tbody tr:last-child td {
     border-bottom: none;
 }
+.table tbody td {
+    border-color: var(--table-border);
+}
 
+.table thead th {
+    border-color: var(--table-border);
+}
+
+.table tbody tr:hover {
+    background: var(--hover-rows);
+}
 /* LINKS */
 
 .newsLink {
-    color: rgb(34, 211, 238);
+    color: var(--accent);
 
     text-decoration: none;
 

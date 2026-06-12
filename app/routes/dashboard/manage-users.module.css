@@ -15,7 +15,7 @@
 .title {
     margin: 0 0 24px;
 
-    color: #ffffff;
+    color: var(--text);
 
     font-size: 2rem;
 
@@ -27,9 +27,9 @@
 ========================= */
 
 .form {
-    background: #11141b;
+    background: var(--surface);
 
-    border: 1px solid #1f242e;
+    border: 1px solid var(--table-border);
 
     border-radius: 20px;
 
@@ -58,9 +58,9 @@
 
     border: 1px solid #1f242e;
 
-    background: #0d1016;
+    background: var(--bg-dashboard);
 
-    color: white;
+    color: var(--text);
 
     font-size: 14px;
 }
@@ -73,7 +73,7 @@
 .form select:focus {
     outline: none;
 
-    border-color: rgb(34, 211, 238);
+    border-color: var(--accent);
 
     box-shadow:
         0 0 0 3px rgba(
@@ -93,7 +93,7 @@
 
     border-radius: 12px;
 
-    background: rgb(34, 211, 238);
+    background: var(--accent);
 
     color: #0a0c10;
 
@@ -115,7 +115,7 @@
 .sectionTitle {
     margin-bottom: 12px;
 
-    color: white;
+    color: var(--text);
 
     font-size: 18px;
 
@@ -131,7 +131,7 @@
 
     background: #11141b;
 
-    border: 1px solid #1f242e;
+    border: 1px solid var(--table-border);
 
     border-radius: 20px;
 }
@@ -141,11 +141,11 @@
 
     border-collapse: collapse;
 
-    background: #11141b;
+    background: var(--surface);
 }
 
 .table thead {
-    background: #11141b;
+    background: var(--surface);
 }
 
 .table th {
@@ -153,7 +153,7 @@
 
     text-align: left;
 
-    color: #9097a4;
+    color: var(--text-muted);
 
     font-size: 12px;
 
@@ -169,7 +169,7 @@
 .table td {
     padding: 16px;
 
-    color: white;
+    color: var(--text-muted);
 
     font-size: 14px;
 
@@ -177,11 +177,23 @@
 }
 
 .table tbody tr:hover {
-    background: #171b24;
+    background: var(--table-hover);
 }
 
 .table tbody tr:last-child td {
     border-bottom: none;
+}
+
+.table tbody td {
+    border-color: var(--table-border);
+}
+
+.table thead th {
+    border-color: var(--table-border);
+}
+
+.table tbody tr:hover {
+    background: var(--hover-rows);
 }
 
 /* =========================

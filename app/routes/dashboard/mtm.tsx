@@ -5,8 +5,13 @@ import styles from "./mtm.module.css";
 import {
     db 
 } from "~/database/db.server";
-import PnLPieChart from "~/components/charts/piechart";
-import PnLBarChart from "~/components/charts/barchart";
+import PnLPieChart, {
+    PnLPieChartSript 
+} from "~/components/charts/piechart";
+import PnLBarChart, {
+    PnLBarChartScript 
+} from "~/components/charts/barchart";
+import { useState } from "react";
 
 export async function loader({
     request
@@ -164,6 +169,44 @@ export default function ExitTradesPage({
     const optionsContribution =
         Math.abs(optionsPnL);
 
+    const scriptPnLMap = new Map();
+
+    for (const trade of exitTrades) {
+        const script =
+            trade.position?.script ?? "Unknown";
+
+        const existing =
+            scriptPnLMap.get(script) ?? 0;
+
+        scriptPnLMap.set(
+            script,
+            existing + (trade.pnl ?? 0)
+        );
+    }
+
+    const scriptPnLs = Array.from(scriptPnLMap.entries())
+        .map(([
+            script,
+            pnl
+        ]) => ({
+            script,
+            pnl
+        }))
+        .sort((a, b) =>
+            Math.abs(b.pnl) -
+        Math.abs(a.pnl));
+
+
+    const [
+    showFutures,
+    setShowFutures
+] = useState(false);
+
+const [
+    showOptions,
+    setShowOptions
+] = useState(false);
+
     return (
         <div className={styles.page}>
 
@@ -229,18 +272,91 @@ export default function ExitTradesPage({
 
             </div>
 
-            <div>
-                <PnLPieChart
-                    futuresPnL={futuresContribution}
-                    optionsPnL={optionsContribution}
-                />
-                <PnLBarChart futuresPnL={futuresPnL} optionsPnL={optionsPnL} />
+            <div className={styles.chartGrid}>
+                <div className={styles.chartCard}>
+                    <div className={styles.chartHeader}>
+                        <h3>Futures vs Options Contribution</h3>
+
+                        <p>
+                            Share of realised PnL contribution
+                        </p>
+                    </div>
+
+                    <PnLPieChart
+                        futuresPnL={futuresContribution}
+                        optionsPnL={optionsContribution}
+                    />
+                </div>
+
+                <div className={styles.chartCard}>
+                    <div className={styles.chartHeader}>
+                        <h3>Futures vs Options PnL</h3>
+
+                        <p>
+                            Net realised profit and loss
+                        </p>
+                    </div>
+
+                    <PnLBarChart
+                        futuresPnL={futuresPnL}
+                        optionsPnL={optionsPnL}
+                    />
+                </div>
             </div>
 
-            <h2 className={styles.sectionTitle}>
-                Futures
-            </h2>
-            <div className={styles.tableWrapper}>
+            <div className={styles.chartGrid}>
+                <div className={styles.chartCard}>
+                    <div className={styles.chartHeader}>
+                        <h3>Script Contribution</h3>
+
+                        <p>
+                            PnL share by traded script
+                        </p>
+                    </div>
+
+                    <PnLPieChartSript
+                        data={scriptPnLs}
+                    />
+                </div>
+
+                <div
+                    className={`${styles.chartCard} ${styles.chartCardWide}`}
+                >
+                    <div className={styles.chartHeader}>
+                        <h3>Script-wise PnL</h3>
+
+                        <p>
+                            Realised profit and loss by script
+                        </p>
+                    </div>
+
+                    <PnLBarChartScript
+                        data={scriptPnLs}
+                    />
+                </div>
+            </div>
+
+            <div className={styles.sectionHeader}>
+    <h2 className={styles.sectionTitle}>
+        Futures
+    </h2>
+
+    <button
+        className={styles.toggleButton}
+        onClick={() =>
+            setShowFutures(
+                !showFutures
+            )
+        }
+    >
+        {
+            showFutures
+                ? "Hide"
+                : "Show"
+        }
+    </button>
+</div>
+            {showFutures && (<div className={styles.tableWrapper}>
 
                 <table className={styles.table}>
 
@@ -311,11 +427,28 @@ export default function ExitTradesPage({
 
                 </table>
 
-            </div>
-            <h2 className={styles.sectionTitle}>
-                Options
-            </h2>
-            <div className={styles.tableWrapper}>
+            </div>)}
+            <div className={styles.sectionHeader}>
+    <h2 className={styles.sectionTitle}>
+        Options
+    </h2>
+
+    <button
+        className={styles.toggleButton}
+        onClick={() =>
+            setShowOptions(
+                !showOptions
+            )
+        }
+    >
+        {
+            showOptions
+                ? "Hide"
+                : "Show"
+        }
+    </button>
+</div>
+            {showOptions && (<div className={styles.tableWrapper}>
 
                 <table className={styles.table}>
 
@@ -394,7 +527,7 @@ export default function ExitTradesPage({
 
                 </table>
 
-            </div>
+            </div>)}
 
         </div>
     );
