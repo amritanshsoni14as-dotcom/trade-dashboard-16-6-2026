@@ -1,6 +1,7 @@
 import {
     Outlet,
-    useLoaderData
+    useLoaderData,
+    useRevalidator
 } from "react-router";
 
 import {
@@ -14,14 +15,23 @@ import {
 import {
     useEffect, useState 
 } from "react";
+import {
+    doALogin, getLastTradedPrice, getToken 
+} from "~/database/utils.server";
 
 export async function loader({
     request 
 }: any) {
     const user = await requireUser(request);
+    // const token =
+    //     await doALogin();
+
+    // const lastTradedPrice =
+    // await getLastTradedPrice(token);
     // console.log(user)
     return {
         user
+        // lastTradedPrice
     };
 }
 
@@ -30,12 +40,27 @@ export default function AppLayout({
 }: any) {
     const {
         user
+        // lastTradedPrice
     } = loaderData;
 
     const [
         theme,
         setTheme
     ] = useState("light");
+    const revalidator =
+        useRevalidator();
+
+    useEffect(() => {
+        const interval =
+            setInterval(() => {
+                revalidator.revalidate();
+            }, 60_000);
+
+        return () =>
+            clearInterval(interval);
+    }, [
+        revalidator
+    ]);
 
     useEffect(() => {
         const saved =
@@ -74,7 +99,7 @@ export default function AppLayout({
 
     return (
         <div className={styles.container}>
-            <Navbar />
+            <Navbar nifty={0}  />
 
             <div className={styles.content}>
                 <header className={styles.topbar}>

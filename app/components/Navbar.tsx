@@ -4,7 +4,11 @@ import {
 
 import styles from "./navbar.module.css";
 
-export function Navbar() {
+export function Navbar({
+    nifty 
+}: {
+    nifty: number 
+}) {
     return (
         <aside className={styles.sidebar}>
             <div className={styles.logo}>
@@ -92,6 +96,8 @@ export function Navbar() {
                     🚪 Logout
                 </NavLink>
             </nav>
+
+            <div className={styles.nifty}>Nifty 50 = {nifty}</div>
 
             <div className={styles.footer}>
                 v0.1 · internal

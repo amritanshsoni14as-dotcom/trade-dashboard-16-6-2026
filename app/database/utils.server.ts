@@ -29,8 +29,9 @@ async function doALogin() {
             appKey: XTS_APP_KEY
         })
     });
-
+    // console.log(response);
     const data = await response.json();
+    
     return data.result.token;
 }
 
@@ -820,10 +821,77 @@ export async function getLatestDailyPnL(userId: number) {
     });
 }
 
+const BASE_URL =
+    "http://xts.achintya.net.in:3000";
+
+async function getToken() {
+    const response =
+        await fetch(
+            `${BASE_URL}/apimarketdata/auth/login`,
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    appKey: "ddc9ca260dee67556bd436",
+                    secretKey: "Fixs437#W1"
+                })
+            }
+        );
+
+    if (!response.ok) {
+        throw new Error("Login failed");
+    }
+
+    const data =
+        await response.json();
+
+    return data.result.token;
+}
+
+async function getLastTradedPrice(token) {
+    const response =
+        await fetch(
+            `${BASE_URL}/apimarketdata/instruments/quotes`,
+            {
+                method: "POST",
+                headers: {
+                    Authorization: token,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    instruments: [
+                        {
+                            exchangeSegment: 1,
+                            exchangeInstrumentID: 26000
+                        }
+                    ],
+                    xtsMessageCode: 1512,
+                    publishFormat: "JSON"
+                })
+            }
+        );
+
+    if (!response.ok) {
+        throw new Error("Quote request failed");
+    }
+
+    const data =
+        await response.json();
+
+    const quote =
+        JSON.parse(data.result.listQuotes[0]);
+
+    return quote.LastTradedPrice;
+}
+
 export {
     getInstrumentDetails,
     doALogin,
     isMarketHoursIST,
     calculatePnL,
-    calculatePnLForUser
+    calculatePnLForUser,
+    getLastTradedPrice,
+    getToken
 };
