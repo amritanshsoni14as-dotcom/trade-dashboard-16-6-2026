@@ -15,9 +15,6 @@ import {
 import {
     useEffect, useState 
 } from "react";
-import {
-    doALogin, getLastTradedPrice, getToken 
-} from "~/database/utils.server";
 
 export async function loader({
     request 
