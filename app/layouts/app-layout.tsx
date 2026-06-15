@@ -15,9 +15,9 @@ import {
 import {
     useEffect, useState 
 } from "react";
-import {
-    doALogin, getLastTradedPrice, getToken 
-} from "~/database/utils.server";
+// import {
+//     doALogin, getLastTradedPrice, getToken 
+// } from "~/database/utils.server";
 
 export async function loader({
     request 
@@ -50,7 +50,7 @@ export default function AppLayout({
     const revalidator =
         useRevalidator();
 
-    useEffect(() => {
+    /* useEffect(() => {
         const interval =
             setInterval(() => {
                 revalidator.revalidate();
@@ -60,7 +60,7 @@ export default function AppLayout({
             clearInterval(interval);
     }, [
         revalidator
-    ]);
+    ]); */
 
     useEffect(() => {
         const saved =

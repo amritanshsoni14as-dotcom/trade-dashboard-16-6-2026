@@ -153,6 +153,8 @@ export default function PnLBarChart({
 type ScriptPnL = {
     script: string;
     pnl: number;
+    futuresPnL: number;
+    optionsPnL: number;
 };
 
 type Props_2 = {
@@ -189,15 +191,25 @@ export function PnLBarChartScript({
             canvas.height
         );
 
-        const values = data.map(item => ({
-            label: item.script,
-            value: item.pnl
-        }));
+        const values =
+            data.map(item => ({
+                label: item.script,
+                futuresPnL:
+            item.futuresPnL,
+                optionsPnL:
+            item.optionsPnL,
+                totalPnL:
+            item.pnl
+            }));
 
         const max =
             Math.max(
                 ...values.map(v =>
-                    Math.abs(v.value)),
+                    Math.max(
+                        Math.abs(v.futuresPnL),
+                        Math.abs(v.optionsPnL),
+                        Math.abs(v.totalPnL)
+                    )),
                 1
             );
 
@@ -214,30 +226,87 @@ export function PnLBarChartScript({
 
             const x =
                 70 +
-                    index * 140;
+        index * 140;
 
-            const height =
-                (Math.abs(item.value) / max) *
-                    90;
+            const futureHeight =
+                (
+                    Math.abs(item.futuresPnL) / max
+                ) * 90;
 
-            const y =
-                item.value >= 0
-                    ? zeroY - height
+            const optionHeight =
+                (
+                    Math.abs(item.optionsPnL) / max
+                ) * 90;
+
+            /*
+    =========================
+    FUTURE
+    =========================
+    */
+
+            const futureY =
+                item.futuresPnL >= 0
+                    ? zeroY -
+              futureHeight
                     : zeroY;
 
             ctx.fillStyle =
-                item.value >= 0
-                    ? "#00c853"
-                    : "#ef4444";
+                "#22d3ee";
 
             ctx.fillRect(
                 x,
-                y,
+                futureY,
                 barWidth,
-                height
+                futureHeight
             );
 
-            ctx.fillStyle = "#64748b";
+            /*
+    =========================
+    OPTION
+    =========================
+    */
+
+            let optionY =
+                zeroY;
+
+            if (
+                item.optionsPnL >= 0
+            ) {
+
+                optionY =
+                    item.futuresPnL >= 0
+                        ? futureY -
+                  optionHeight
+                        : zeroY -
+                  optionHeight;
+
+            } else {
+
+                optionY =
+                    item.futuresPnL < 0
+                        ? zeroY +
+                  futureHeight
+                        : zeroY;
+            }
+
+            ctx.fillStyle =
+                "#f57c00";
+
+            ctx.fillRect(
+                x,
+                optionY,
+                barWidth,
+                optionHeight
+            );
+
+            /*
+    =========================
+    LABEL
+    =========================
+    */
+
+            ctx.fillStyle =
+                "#64748b";
 
             ctx.textAlign =
                 "center";
@@ -245,21 +314,25 @@ export function PnLBarChartScript({
             ctx.fillText(
                 item.label,
                 x +
-                        barWidth /
-                            2,
+            barWidth / 2,
                 chartBottom
             );
 
             ctx.fillText(
-                `₹${Math.round(item.value).toLocaleString("en-IN")}`,
+                `₹${Math.round(item.totalPnL).toLocaleString("en-IN")}`,
                 x +
-                        barWidth /
-                            2,
-                item.value >= 0
-                    ? y - 8
-                    : y +
-                              height +
-                              16
+            barWidth / 2,
+                item.totalPnL >= 0
+                    ? Math.min(
+                        futureY,
+                        optionY
+                    ) - 8
+                    : Math.max(
+                        futureY +
+                      futureHeight,
+                        optionY +
+                      optionHeight
+                    ) + 16
             );
         });
 

@@ -174,29 +174,60 @@ export default function ExitTradesPage({
     const scriptPnLMap = new Map();
 
     for (const trade of exitTrades) {
+
         const script =
-            trade.position?.script ?? "Unknown";
+            trade.position?.script ??
+        "Unknown";
 
-        const existing =
-            scriptPnLMap.get(script) ?? 0;
+        const instrument =
+            trade.position?.instrumentType;
 
-        scriptPnLMap.set(
-            script,
-            existing + (trade.pnl ?? 0)
-        );
+        if (!scriptPnLMap.has(script)) {
+
+            scriptPnLMap.set(
+                script,
+                {
+                    script,
+                    pnl: 0,
+                    futuresPnL: 0,
+                    optionsPnL: 0
+                }
+            );
+
+        }
+
+        const item =
+            scriptPnLMap.get(script);
+
+        item.pnl +=
+            trade.pnl ?? 0;
+
+        if (
+            instrument ===
+        "FUTURE"
+        ) {
+
+            item.futuresPnL +=
+                trade.pnl ?? 0;
+
+        }
+
+        if (
+            instrument ===
+        "OPTIONS"
+        ) {
+
+            item.optionsPnL +=
+                trade.pnl ?? 0;
+
+        }
+
     }
 
-    const scriptPnLs = Array.from(scriptPnLMap.entries())
-        .map(([
-            script,
-            pnl
-        ]) => ({
-            script,
-            pnl
-        }))
-        .sort((a, b) =>
+    const scriptPnLs =
+        Array.from(scriptPnLMap.values()).sort((a, b) =>
             Math.abs(b.pnl) -
-        Math.abs(a.pnl));
+            Math.abs(a.pnl));
 
     const [
         showFutures,
@@ -305,7 +336,7 @@ export default function ExitTradesPage({
                 </div>
             </div>
 
-            <div className={styles.chartGrid}>
+            <div className={styles.rando}>
                 <div className={styles.chartCard}>
                     <div className={styles.chartHeader}>
                         <h3>Script Contribution</h3>
@@ -321,7 +352,7 @@ export default function ExitTradesPage({
                 </div>
 
                 <div
-                    className={`${styles.chartCard} ${styles.chartCardWide}`}
+                    className={`${styles.chartCard} ${styles.chartCardWide} ${styles.rando}`}
                 >
                     <div className={styles.chartHeader}>
                         <h3>Script-wise PnL</h3>
@@ -511,13 +542,10 @@ export default function ExitTradesPage({
                                 >
                                     ₹{trade.pnl.toLocaleString("en-IN")}
                                 </td>
-
                                 <td>
                                     {trade.user?.username}
                                 </td>
-
                             </tr>
-
                         ))}
 
                     </tbody>
