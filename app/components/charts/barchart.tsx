@@ -1,6 +1,7 @@
 import {
     useEffect,
-    useRef
+    useRef,
+    useState
 } from "react";
 
 type Props = {
@@ -169,6 +170,32 @@ export function PnLBarChartScript({
 
     const canvasRef =
         useRef<HTMLCanvasElement>(null);
+    //     const [hoveredBar, setHoveredBar] =
+    // useState<{
+    //     x: number;
+    //     y: number;
+    //     value: number;
+    //     label: string;
+    // } | null>(null);
+    const [
+        tooltip,
+        setTooltip
+    ] = useState<{
+        x: number;
+        y: number;
+        value: number;
+        label: string;
+    } | null>(null);
+
+    const hitBoxesRef = useRef<{
+        x: number;
+        y: number;
+        width: number;
+        height: number;
+        value: number;
+        label: string;
+    }[]>([
+    ]);
 
     const handleClick = (event: React.MouseEvent<HTMLCanvasElement>) => {
 
@@ -214,6 +241,45 @@ export function PnLBarChartScript({
             }
         }
     };
+    function handleMouseMove(e: React.MouseEvent<HTMLCanvasElement>) {
+
+        const canvas =
+            canvasRef.current;
+
+        if (!canvas) {
+            return;
+        }
+
+        const rect =
+            canvas.getBoundingClientRect();
+
+        const mouseX =
+            e.clientX - rect.left;
+
+        const mouseY =
+            e.clientY - rect.top;
+
+        const found =
+            hitBoxesRef.current.find(box =>
+                mouseX >= box.x &&
+            mouseX <= box.x + box.width &&
+            mouseY >= box.y &&
+            mouseY <= box.y + box.height);
+
+        if (!found) {
+
+            setTooltip(null);
+
+            return;
+        }
+
+        setTooltip({
+            x: mouseX,
+            y: mouseY,
+            value: found.value,
+            label: found.label
+        });
+    }
 
     useEffect(() => {
 
@@ -262,9 +328,18 @@ export function PnLBarChartScript({
 
         const chartTop = 20;
         const chartBottom = 220;
-        const zeroY = 120;
+        const zeroY = 150;
 
         const barWidth = 80;
+        const hitBoxes: {
+            x: number;
+            y: number;
+            width: number;
+            height: number;
+            value: number;
+            label: string;
+        }[] = [
+        ];
 
         values.forEach((
             item,
@@ -290,13 +365,13 @@ export function PnLBarChartScript({
             const barWidth = 20;
 
             const futureHeight =
-                Math.abs(item.futuresPnL) / max * 90;
+                Math.abs(item.futuresPnL) / max * 140;
 
             const optionHeight =
-                Math.abs(item.optionsPnL) / max * 90;
+                Math.abs(item.optionsPnL) / max * 140;
 
             const totalHeight =
-                Math.abs(item.totalPnL) / max * 90;
+                Math.abs(item.totalPnL) / max * 140;
 
             /*
     =========================
@@ -317,6 +392,14 @@ export function PnLBarChartScript({
                 barWidth,
                 futureHeight
             );
+            hitBoxes.push({
+                x: futureX,
+                y: futureY,
+                width: barWidth,
+                height: futureHeight,
+                value: item.futuresPnL,
+                label: `${item.label} Futures`
+            });
 
             /*
     =========================
@@ -337,6 +420,19 @@ export function PnLBarChartScript({
                 barWidth,
                 optionHeight
             );
+            hitBoxes.push({
+                x: optionX,
+                y: optionY,
+                width: barWidth,
+                height: optionHeight,
+                value: item.optionsPnL,
+                label: `${item.label} Options`
+            });
+            /*
+    =========================
+    TOTAL
+    =========================
+    */
             const totalY =
                 item.totalPnL >= 0
                     ? zeroY - totalHeight
@@ -350,6 +446,14 @@ export function PnLBarChartScript({
                 barWidth,
                 totalHeight
             );
+            hitBoxes.push({
+                x: totalX,
+                y: totalY,
+                width: barWidth,
+                height: totalHeight,
+                value: item.totalPnL,
+                label: `${item.label} Total`
+            });
 
             const legendX = 920;
             const legendY = 40;
@@ -422,13 +526,13 @@ export function PnLBarChartScript({
                 chartBottom
             );
 
-            ctx.fillText(
-                `₹${Math.round(item.totalPnL).toLocaleString("en-IN")}`,
-                totalX + barWidth / 2,
-                item.totalPnL >= 0
-                    ? totalY - 8
-                    : totalY + totalHeight + 16
-            );
+            // ctx.fillText(
+            //     `₹${Math.round(item.totalPnL).toLocaleString("en-IN")}`,
+            //     totalX + barWidth / 2,
+            //     item.totalPnL >= 0
+            //         ? totalY - 8
+            //         : totalY + totalHeight + 16
+            // );
         });
 
         ctx.strokeStyle =
@@ -447,17 +551,59 @@ export function PnLBarChartScript({
         );
 
         ctx.stroke();
+        hitBoxesRef.current = hitBoxes;
 
     }, [
         data
     ]);
 
     return (
-        <canvas
-            ref={canvasRef}
-            width={1000}
-            height={250}
-            onClick={handleClick}
-        />
+        <div
+            style={{
+                position: "relative",
+                width: "fit-content"
+            }}
+        >
+            <canvas
+                ref={canvasRef}
+                width={1000}
+                height={350}
+                onClick={handleClick}
+                onMouseMove={handleMouseMove}
+                onMouseLeave={() =>
+                    setTooltip(null)
+                }
+                style={{
+                    cursor: "pointer"
+                }}
+            />
+
+            {tooltip && (
+                <div
+                    style={{
+                        position: "absolute",
+                        left: tooltip.x + 10,
+                        top: tooltip.y - 10,
+                        background: "#11161d",
+                        border: "1px solid #232a33",
+                        padding: "8px",
+                        borderRadius: "8px",
+                        pointerEvents: "none",
+                        color: "#f8fafc",
+                        fontSize: "12px",
+                        zIndex: 100
+                    }}
+                >
+                    <div>
+                        {tooltip.label}
+                    </div>
+
+                    <div>
+                        ₹
+                        {tooltip.value.toLocaleString("en-IN")}
+                    </div>
+                </div>
+            )}
+        </div>
     );
 }
