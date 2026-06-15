@@ -1,7 +1,8 @@
 import {
     eq,
     gt,
-    desc
+    desc,
+    and
 } from "drizzle-orm";
 
 import {
@@ -334,6 +335,33 @@ export async function action({
 
     const actionType =
         String(formData.get("actionType"));
+
+    if (actionType === "DELETE") {
+        if (!positionId) {
+            return Response.json({
+                error: "Invalid position id" 
+            }, {
+                status: 400 
+            });
+        }
+
+        if (currentUser.role === "admin") {
+            await db
+                .delete(positions)
+                .where(eq(positions.id, positionId));
+        } else {
+            await db
+                .delete(positions)
+                .where(and(
+                    eq(positions.id, positionId),
+                    eq(positions.userId, currentUser.id)
+                ));
+        }
+
+        return Response.json({
+            success: true 
+        });
+    }
 
     /*
     =========================
@@ -863,7 +891,6 @@ AUTO REFRESH
                                                     className={styles.dialog}
                                                 >
                                                     <Form method="post">
-
                                                         <input
                                                             type="hidden"
                                                             name="positionId"
@@ -896,7 +923,6 @@ AUTO REFRESH
                                                                 type="number"
                                                                 name="lots"
                                                                 min="1"
-                                                                
                                                                 required
                                                             />
                                                         </div>
@@ -911,18 +937,17 @@ AUTO REFRESH
                                                                 required
                                                             />
                                                         </div>
-                                                        {
-                                                            action_data?.error && (
-                                                                <p
-                                                                    style={{
-                                                                        color: "red",
-                                                                        marginTop: "8px"
-                                                                    }}
-                                                                >
-                                                                    {action_data.error}
-                                                                </p>
-                                                            )
-                                                        }
+
+                                                        {action_data?.error && (
+                                                            <p
+                                                                style={{
+                                                                    color: "red",
+                                                                    marginTop: "8px"
+                                                                }}
+                                                            >
+                                                                {action_data.error}
+                                                            </p>
+                                                        )}
 
                                                         <div className={styles.dialogActions}>
                                                             <button type="submit">
@@ -940,11 +965,42 @@ AUTO REFRESH
                                                                 Cancel
                                                             </button>
                                                         </div>
-
                                                     </Form>
                                                 </dialog>
                                             </>
                                         )}
+
+                                        <Form
+                                            method="post"
+                                            onSubmit={(e) => {
+                                                const ok = window.confirm(`Delete ${position.script}? This will also delete all linked trades.`);
+
+                                                if (!ok) e.preventDefault();
+                                            }}
+                                            style={{
+                                                display: "inline-block",
+                                                marginLeft: "8px" 
+                                            }}
+                                        >
+                                            <input
+                                                type="hidden"
+                                                name="actionType"
+                                                value="DELETE"
+                                            />
+
+                                            <input
+                                                type="hidden"
+                                                name="positionId"
+                                                value={position.id}
+                                            />
+
+                                            <button
+                                                type="submit"
+                                                className={styles.squareOffBtn}
+                                            >
+                                                Delete
+                                            </button>
+                                        </Form>
                                     </td>
                                 </tr>
                             ))}
@@ -1047,7 +1103,6 @@ AUTO REFRESH
                                                     className={styles.dialog}
                                                 >
                                                     <Form method="post">
-
                                                         <input
                                                             type="hidden"
                                                             name="positionId"
@@ -1080,7 +1135,6 @@ AUTO REFRESH
                                                                 type="number"
                                                                 name="lots"
                                                                 min="1"
-                                                                
                                                                 required
                                                             />
                                                         </div>
@@ -1095,18 +1149,17 @@ AUTO REFRESH
                                                                 required
                                                             />
                                                         </div>
-                                                        {
-                                                            action_data?.error && (
-                                                                <p
-                                                                    style={{
-                                                                        color: "red",
-                                                                        marginTop: "8px"
-                                                                    }}
-                                                                >
-                                                                    {action_data.error}
-                                                                </p>
-                                                            )
-                                                        }
+
+                                                        {action_data?.error && (
+                                                            <p
+                                                                style={{
+                                                                    color: "red",
+                                                                    marginTop: "8px"
+                                                                }}
+                                                            >
+                                                                {action_data.error}
+                                                            </p>
+                                                        )}
 
                                                         <div className={styles.dialogActions}>
                                                             <button type="submit">
@@ -1124,11 +1177,42 @@ AUTO REFRESH
                                                                 Cancel
                                                             </button>
                                                         </div>
-
                                                     </Form>
                                                 </dialog>
                                             </>
                                         )}
+
+                                        <Form
+                                            method="post"
+                                            onSubmit={(e) => {
+                                                const ok = window.confirm(`Delete ${position.script}? This will also delete all linked trades.`);
+
+                                                if (!ok) e.preventDefault();
+                                            }}
+                                            style={{
+                                                display: "inline-block",
+                                                marginLeft: "8px" 
+                                            }}
+                                        >
+                                            <input
+                                                type="hidden"
+                                                name="actionType"
+                                                value="DELETE"
+                                            />
+
+                                            <input
+                                                type="hidden"
+                                                name="positionId"
+                                                value={position.id}
+                                            />
+
+                                            <button
+                                                type="submit"
+                                                className={styles.squareOffBtn}
+                                            >
+                                                Delete
+                                            </button>
+                                        </Form>
                                     </td>
                                 </tr>
                             ))}
