@@ -23,6 +23,7 @@ import {
 } from "react";
 import {
     Form,
+    useActionData,
     useNavigation,
     useRevalidator
 } from "react-router";
@@ -356,6 +357,22 @@ export async function action({
             error: "Position already closed"
         };
     }
+    if (
+        actionType === "EXIT" &&
+    lots > position.quantity
+    ) {
+        return {
+            error:
+            `Cannot exit ${lots} lots. Only ${position.quantity} lots are currently available.`
+        };
+    }
+
+    if (lots <= 0) {
+        return {
+            error:
+            "Lots must be greater than zero."
+        };
+    }
 
     /*
     =========================
@@ -623,7 +640,7 @@ export default function TradesPage({
 AUTO REFRESH
 =========================
 */
-
+    const action_data = useActionData();
     useEffect(() => {
 
         const interval =
@@ -650,7 +667,7 @@ AUTO REFRESH
 
         if (
             navigation.state ===
-            "idle"
+            "idle" && action_data?.success
         ) {
 
             const dialogs =
@@ -664,7 +681,8 @@ AUTO REFRESH
         }
 
     }, [
-        navigation.state
+        navigation.state,
+        action_data
     ]);
 
     return (
@@ -878,7 +896,7 @@ AUTO REFRESH
                                                                 type="number"
                                                                 name="lots"
                                                                 min="1"
-                                                                max={position.quantity}
+                                                                
                                                                 required
                                                             />
                                                         </div>
@@ -893,6 +911,18 @@ AUTO REFRESH
                                                                 required
                                                             />
                                                         </div>
+                                                        {
+                                                            action_data?.error && (
+                                                                <p
+                                                                    style={{
+                                                                        color: "red",
+                                                                        marginTop: "8px"
+                                                                    }}
+                                                                >
+                                                                    {action_data.error}
+                                                                </p>
+                                                            )
+                                                        }
 
                                                         <div className={styles.dialogActions}>
                                                             <button type="submit">
@@ -1050,7 +1080,7 @@ AUTO REFRESH
                                                                 type="number"
                                                                 name="lots"
                                                                 min="1"
-                                                                max={position.quantity}
+                                                                
                                                                 required
                                                             />
                                                         </div>
@@ -1065,6 +1095,18 @@ AUTO REFRESH
                                                                 required
                                                             />
                                                         </div>
+                                                        {
+                                                            action_data?.error && (
+                                                                <p
+                                                                    style={{
+                                                                        color: "red",
+                                                                        marginTop: "8px"
+                                                                    }}
+                                                                >
+                                                                    {action_data.error}
+                                                                </p>
+                                                            )
+                                                        }
 
                                                         <div className={styles.dialogActions}>
                                                             <button type="submit">

@@ -346,40 +346,115 @@ async function calculatePnL(request: Request) {
                 Number(position.settledPrice);
 
             const current =
-                Number(position.currentPrice ??
-                        0);
+                Number(position.currentPrice ?? 0);
 
-            let diff = 0;
+            let diff: number;
+
+            /*
+        =========================
+        POSITION OPENED TODAY
+        =========================
+
+        If the position was opened today,
+        there is no meaningful overnight MTM.
+
+        Calculate PnL relative to the
+        average entry price:
+
+            LONG  => current - averagePrice
+            SHORT => averagePrice - current
+
+        The SHORT reversal is handled later,
+        so we calculate:
+
+            current - averagePrice
+
+        here and flip the sign afterwards.
+        */
+
+            const createdDate =
+                position.createdAt
+                    .toISOString()
+                    .split("T")[0];
 
             if (
-                isLiveMarket
+                createdDate ===
+            todayDate
             ) {
+
+                const averagePrice =
+                    Number(position.averagePrice);
+
                 diff =
                     current -
-                        previousSettled;
+                averagePrice;
+
             } else {
-                diff =
-                    settled -
-                        previousSettled;
+
+                /*
+            =========================
+            EXISTING POSITION
+            =========================
+
+            Position was carried from a
+            previous trading day.
+
+            During market hours use:
+                currentPrice - previousSettledPrice
+
+            After market close use:
+                settledPrice - previousSettledPrice
+            */
+
+                if (
+                    isLiveMarket
+                ) {
+
+                    diff =
+                        current -
+                    previousSettled;
+
+                } else {
+
+                    diff =
+                        settled -
+                    previousSettled;
+
+                }
             }
+
+            /*
+        =========================
+        SHORT REVERSE
+        =========================
+
+        Price increases help LONG positions
+        and hurt SHORT positions, so reverse
+        the sign for SHORTs.
+        */
 
             if (
                 position.positionType ===
-                    "SHORT"
+            "SHORT"
             ) {
                 diff *= -1;
             }
 
             /*
-                =========================
-                MULTIPLY LOT SIZE
-                =========================
-                */
+        =========================
+        MULTIPLY LOT SIZE
+        =========================
+
+        PnL =
+            Price Difference
+            × Quantity
+            × Lot Size
+        */
 
             const pnl =
                 diff *
-                    position.quantity *
-                    position.lotSize;
+            position.quantity *
+            position.lotSize;
 
             return {
                 ...position,
@@ -387,7 +462,7 @@ async function calculatePnL(request: Request) {
                 pnl,
 
                 source:
-                        "ACTIVE"
+                "ACTIVE"
             };
         });
 
