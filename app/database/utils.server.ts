@@ -176,6 +176,10 @@ function getTodayStartIST() {
 
 async function calculatePnL(request: Request) {
     /**
+     * i think the bottom comment is no longer true tho ... maybe it got changed sometime ago
+     */
+
+    /**
  * NOTE FOR FUTURE DEVELOPERS
  *
  * This function calculates MTM PnL using:

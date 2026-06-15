@@ -294,7 +294,7 @@
     justify-content: space-between;
 
     margin-top: 24px;
-
+    color: var(--text);
     margin-bottom: 12px;
 }
 

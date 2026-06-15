@@ -159,14 +159,61 @@ type ScriptPnL = {
 
 type Props_2 = {
     data: ScriptPnL[];
+    onScriptClick: (script: string) => void;
 };
 
 export function PnLBarChartScript({
-    data
+    data,
+    onScriptClick
 }: Props_2) {
 
     const canvasRef =
         useRef<HTMLCanvasElement>(null);
+
+    const handleClick = (event: React.MouseEvent<HTMLCanvasElement>) => {
+
+        const canvas =
+            canvasRef.current;
+
+        if (!canvas) return;
+
+        const rect =
+            canvas.getBoundingClientRect();
+
+        const clickX =
+            event.clientX - rect.left;
+
+        const barWidth = 80;
+
+        for (
+            let index = 0;
+            index < data.length;
+            index++
+        ) {
+
+            const groupX =
+                70 + index * 180;
+
+            const groupLeft =
+                groupX;
+
+            const groupRight =
+                groupX + 80;
+            // Future(20) + gap(10) +
+            // Option(20) + gap(10) +
+            // Total(20)
+
+            if (
+                clickX >= groupLeft &&
+        clickX <= groupRight
+            ) {
+
+                onScriptClick(data[index].script);
+
+                break;
+            }
+        }
+    };
 
     useEffect(() => {
 
@@ -224,19 +271,32 @@ export function PnLBarChartScript({
             index
         ) => {
 
-            const x =
-                70 +
-        index * 140;
+            //     const x =
+            //         70 +
+            // index * 140;
+
+            const groupX =
+                70 + index * 180;
+
+            const futureX =
+                groupX;
+
+            const optionX =
+                groupX + 30;
+
+            const totalX =
+                groupX + 60;
+
+            const barWidth = 20;
 
             const futureHeight =
-                (
-                    Math.abs(item.futuresPnL) / max
-                ) * 90;
+                Math.abs(item.futuresPnL) / max * 90;
 
             const optionHeight =
-                (
-                    Math.abs(item.optionsPnL) / max
-                ) * 90;
+                Math.abs(item.optionsPnL) / max * 90;
+
+            const totalHeight =
+                Math.abs(item.totalPnL) / max * 90;
 
             /*
     =========================
@@ -246,15 +306,13 @@ export function PnLBarChartScript({
 
             const futureY =
                 item.futuresPnL >= 0
-                    ? zeroY -
-              futureHeight
+                    ? zeroY - futureHeight
                     : zeroY;
 
-            ctx.fillStyle =
-                "#22d3ee";
+            ctx.fillStyle = "#22d3ee";
 
             ctx.fillRect(
-                x,
+                futureX,
                 futureY,
                 barWidth,
                 futureHeight
@@ -266,37 +324,84 @@ export function PnLBarChartScript({
     =========================
     */
 
-            let optionY =
-                zeroY;
-
-            if (
+            const optionY =
                 item.optionsPnL >= 0
-            ) {
+                    ? zeroY - optionHeight
+                    : zeroY;
 
-                optionY =
-                    item.futuresPnL >= 0
-                        ? futureY -
-                  optionHeight
-                        : zeroY -
-                  optionHeight;
-
-            } else {
-
-                optionY =
-                    item.futuresPnL < 0
-                        ? zeroY +
-                  futureHeight
-                        : zeroY;
-            }
-
-            ctx.fillStyle =
-                "#f57c00";
+            ctx.fillStyle = "#f57c00";
 
             ctx.fillRect(
-                x,
+                optionX,
                 optionY,
                 barWidth,
                 optionHeight
+            );
+            const totalY =
+                item.totalPnL >= 0
+                    ? zeroY - totalHeight
+                    : zeroY;
+
+            ctx.fillStyle = "#10b981";
+
+            ctx.fillRect(
+                totalX,
+                totalY,
+                barWidth,
+                totalHeight
+            );
+
+            const legendX = 920;
+            const legendY = 40;
+            const boxSize = 12;
+
+            // Futures
+            ctx.fillStyle = "#22d3ee";
+            ctx.fillRect(
+                legendX,
+                legendY,
+                boxSize,
+                boxSize
+            );
+
+            ctx.fillStyle = "#64748b";
+            ctx.textAlign = "left";
+            ctx.fillText(
+                "Futures",
+                legendX + 20,
+                legendY + 10
+            );
+
+            // Options
+            ctx.fillStyle = "#f57c00";
+            ctx.fillRect(
+                legendX,
+                legendY + 25,
+                boxSize,
+                boxSize
+            );
+
+            ctx.fillStyle = "#64748b";
+            ctx.fillText(
+                "Options",
+                legendX + 20,
+                legendY + 35
+            );
+
+            // Total
+            ctx.fillStyle = "#10b981";
+            ctx.fillRect(
+                legendX,
+                legendY + 50,
+                boxSize,
+                boxSize
+            );
+
+            ctx.fillStyle = "#64748b";
+            ctx.fillText(
+                "Total",
+                legendX + 20,
+                legendY + 60
             );
 
             /*
@@ -313,26 +418,16 @@ export function PnLBarChartScript({
 
             ctx.fillText(
                 item.label,
-                x +
-            barWidth / 2,
+                groupX + 30,
                 chartBottom
             );
 
             ctx.fillText(
                 `₹${Math.round(item.totalPnL).toLocaleString("en-IN")}`,
-                x +
-            barWidth / 2,
+                totalX + barWidth / 2,
                 item.totalPnL >= 0
-                    ? Math.min(
-                        futureY,
-                        optionY
-                    ) - 8
-                    : Math.max(
-                        futureY +
-                      futureHeight,
-                        optionY +
-                      optionHeight
-                    ) + 16
+                    ? totalY - 8
+                    : totalY + totalHeight + 16
             );
         });
 
@@ -347,7 +442,7 @@ export function PnLBarChartScript({
         );
 
         ctx.lineTo(
-            280,
+            870,
             zeroY
         );
 
@@ -362,6 +457,7 @@ export function PnLBarChartScript({
             ref={canvasRef}
             width={1000}
             height={250}
+            onClick={handleClick}
         />
     );
 }

@@ -133,6 +133,11 @@ function formatDateIndian(dateString?: string | null) {
 export default function ExitTradesPage({
     loaderData
 }: any) {
+    const [
+        selectedScript,
+        setSelectedScript
+    ] =
+        useState<string | null>(null);
 
     const {
         exitTrades
@@ -238,6 +243,20 @@ export default function ExitTradesPage({
         showOptions,
         setShowOptions
     ] = useState(false);
+
+    const selectedFutureTrades =
+        selectedScript
+            ? futureTrades.filter(trade =>
+                trade.position?.script === selectedScript)
+            : [
+            ];
+
+    const selectedOptionTrades =
+        selectedScript
+            ? optionTrades.filter(trade =>
+                trade.position?.script === selectedScript)
+            : [
+            ];
 
     return (
         <div className={styles.page}>
@@ -364,8 +383,175 @@ export default function ExitTradesPage({
 
                     <PnLBarChartScript
                         data={scriptPnLs}
+                        onScriptClick={setSelectedScript}
                     />
+                    <p style={{
+                        color: "var(--text)"
+                    }}>In order to see 1 stock's futures and options trade details, please click on any bar of the respective stock</p>
                 </div>
+
+                {selectedScript && (
+                    <>
+                        <div className={styles.sectionHeader}>
+                            <h2>
+                                {selectedScript} Details
+                            </h2>
+                        </div>
+
+                        {/* Futures Table */}
+                        {selectedFutureTrades.length > 0 && (
+                            <div className={styles.tableWrapper}>
+                                <table className={styles.table}>
+
+                                    <thead>
+                                        <tr>
+                                            <th>Script</th>
+                                            <th>Type</th>
+                                            <th>Qty</th>
+                                            <th>Expiry Date</th>
+                                            <th>Lot Size</th>
+                                            <th>Avg Price</th>
+                                            <th>Exit Price</th>
+                                            <th>PnL</th>
+                                            <th>User</th>
+                                        </tr>
+                                    </thead>
+
+                                    <tbody>
+
+                                        {selectedFutureTrades.map((trade: any) => (
+
+                                            <tr key={trade.id}>
+
+                                                <td>
+                                                    {trade.position?.script}
+                                                </td>
+
+                                                <td>
+                                                    {trade.position?.positionType}
+                                                </td>
+
+                                                <td>
+                                                    {trade.qty}
+                                                </td>
+                                                <td>{formatDateIndian(trade.position?.expiry)}</td>
+
+                                                <td>
+                                                    {trade.lotSize}
+                                                </td>
+
+                                                <td>
+                                                    ₹{trade.avgPrice.toFixed(2)}
+                                                </td>
+
+                                                <td>
+                                                    ₹{trade.exitPrice.toFixed(2)}
+                                                </td>
+
+                                                <td
+                                                    className={
+                                                        trade.pnl >= 0
+                                                            ? styles.profit
+                                                            : styles.loss
+                                                    }
+                                                >
+                                                    ₹{trade.pnl.toLocaleString("en-IN")}
+                                                </td>
+
+                                                <td>
+                                                    {trade.user?.username}
+                                                </td>
+
+                                            </tr>
+
+                                        ))}
+
+                                    </tbody>
+
+                                </table>
+                            </div>
+                        )}
+
+                        {/* Options Table */}
+                        {selectedOptionTrades.length > 0 && (
+                            <div className={styles.tableWrapper}>
+                                <table className={styles.table}>
+
+                                    <thead>
+                                        <tr>
+                                            <th>Script</th>
+                                            <th>Type</th>
+                                            <th>Strike</th>
+                                            <th>Option</th>
+                                            <th>Qty</th>
+                                            <th>Lot Size</th>
+                                            <th>Avg Price</th>
+                                            <th>Exit Price</th>
+                                            <th>PnL</th>
+                                            <th>User</th>
+                                        </tr>
+                                    </thead>
+
+                                    <tbody>
+
+                                        {selectedOptionTrades.map((trade: any) => (
+
+                                            <tr key={trade.id}>
+
+                                                <td>
+                                                    {trade.position?.script}
+                                                </td>
+
+                                                <td>
+                                                    {trade.position?.positionType}
+                                                </td>
+
+                                                <td>
+                                                    {trade.position?.strikePrice}
+                                                </td>
+
+                                                <td>
+                                                    {trade.position?.optionType}
+                                                </td>
+
+                                                <td>
+                                                    {trade.qty}
+                                                </td>
+
+                                                <td>
+                                                    {trade.lotSize}
+                                                </td>
+
+                                                <td>
+                                                    ₹{trade.avgPrice.toFixed(2)}
+                                                </td>
+
+                                                <td>
+                                                    ₹{trade.exitPrice.toFixed(2)}
+                                                </td>
+
+                                                <td
+                                                    className={
+                                                        trade.pnl >= 0
+                                                            ? styles.profit
+                                                            : styles.loss
+                                                    }
+                                                >
+                                                    ₹{trade.pnl.toLocaleString("en-IN")}
+                                                </td>
+                                                <td>
+                                                    {trade.user?.username}
+                                                </td>
+                                            </tr>
+                                        ))}
+
+                                    </tbody>
+
+                                </table>
+                            </div>
+                        )}
+                    </>
+                )}
             </div>
 
             <div className={styles.sectionHeader}>
