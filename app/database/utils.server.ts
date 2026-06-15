@@ -409,27 +409,78 @@ async function calculatePnL(request: Request) {
             const exitPrice =
                 Number(trade.price);
 
-            let diff =
-                exitPrice -
-                    previousSettled;
+            let diff: number;
 
             /*
-                =========================
-                SHORT REVERSE
-                =========================
-                */
+        =========================
+        SAME-DAY ENTRY + EXIT
+        =========================
+
+        If the position was created today and
+        exited today, there is no meaningful
+        overnight MTM from a previous settlement.
+
+        In this case, calculate PnL using:
+
+            LONG  => exitPrice - averagePrice
+            SHORT => averagePrice - exitPrice
+
+        instead of using previousSettledPrice.
+        */
+
+            const sameDay =
+                position.createdAt.toDateString() ===
+            trade.createdAt.toDateString();
+
+            if (sameDay) {
+
+                const averagePrice =
+                    Number(position.averagePrice);
+
+                diff =
+                    exitPrice -
+                averagePrice;
+
+            } else {
+
+                /*
+            =========================
+            NORMAL MTM EXIT
+            =========================
+
+            Position existed before today.
+
+            Calculate today's realized PnL
+            relative to yesterday's settlement.
+            */
+
+                diff =
+                    exitPrice -
+                previousSettled;
+
+            }
+
+            /*
+        =========================
+        SHORT REVERSE
+        =========================
+
+        Price increase benefits LONG positions
+        but hurts SHORT positions, so reverse
+        the sign for SHORTs.
+        */
 
             if (
                 position.positionType ===
-                    "SHORT"
+            "SHORT"
             ) {
                 diff *= -1;
             }
 
             const pnl =
                 diff *
-                    trade.quantity *
-                    position.lotSize;
+            trade.quantity *
+            position.lotSize;
 
             return {
                 ...position,
@@ -437,12 +488,12 @@ async function calculatePnL(request: Request) {
                 pnl,
 
                 exitedQuantity:
-                        trade.quantity,
+                trade.quantity,
 
                 exitPrice,
 
                 source:
-                        "EXIT"
+                "EXIT"
             };
         });
 
