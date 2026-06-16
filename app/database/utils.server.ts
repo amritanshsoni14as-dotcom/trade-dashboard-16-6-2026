@@ -778,40 +778,115 @@ async function calculatePnLForUser(user: User) {
                 Number(position.settledPrice);
 
             const current =
-                Number(position.currentPrice ??
-                        0);
+                Number(position.currentPrice ?? 0);
 
-            let diff = 0;
+            let diff: number;
+
+            /*
+        =========================
+        POSITION OPENED TODAY
+        =========================
+
+        If the position was opened today,
+        there is no meaningful overnight MTM.
+
+        Calculate PnL relative to the
+        average entry price:
+
+            LONG  => current - averagePrice
+            SHORT => averagePrice - current
+
+        The SHORT reversal is handled later,
+        so we calculate:
+
+            current - averagePrice
+
+        here and flip the sign afterwards.
+        */
+
+            const createdDate =
+                position.createdAt
+                    .toISOString()
+                    .split("T")[0];
 
             if (
-                isLiveMarket
+                createdDate ===
+            todayDate
             ) {
+
+                const averagePrice =
+                    Number(position.averagePrice);
+
                 diff =
                     current -
-                        previousSettled;
+                averagePrice;
+
             } else {
-                diff =
-                    settled -
-                        previousSettled;
+
+                /*
+            =========================
+            EXISTING POSITION
+            =========================
+
+            Position was carried from a
+            previous trading day.
+
+            During market hours use:
+                currentPrice - previousSettledPrice
+
+            After market close use:
+                settledPrice - previousSettledPrice
+            */
+
+                if (
+                    isLiveMarket
+                ) {
+
+                    diff =
+                        current -
+                    previousSettled;
+
+                } else {
+
+                    diff =
+                        settled -
+                    previousSettled;
+
+                }
             }
+
+            /*
+        =========================
+        SHORT REVERSE
+        =========================
+
+        Price increases help LONG positions
+        and hurt SHORT positions, so reverse
+        the sign for SHORTs.
+        */
 
             if (
                 position.positionType ===
-                    "SHORT"
+            "SHORT"
             ) {
                 diff *= -1;
             }
 
             /*
-                =========================
-                MULTIPLY LOT SIZE
-                =========================
-                */
+        =========================
+        MULTIPLY LOT SIZE
+        =========================
+
+        PnL =
+            Price Difference
+            × Quantity
+            × Lot Size
+        */
 
             const pnl =
                 diff *
-                    position.quantity *
-                    position.lotSize;
+            position.quantity *
+            position.lotSize;
 
             return {
                 ...position,
@@ -819,7 +894,7 @@ async function calculatePnLForUser(user: User) {
                 pnl,
 
                 source:
-                        "ACTIVE"
+                "ACTIVE"
             };
         });
 
@@ -841,27 +916,78 @@ async function calculatePnLForUser(user: User) {
             const exitPrice =
                 Number(trade.price);
 
-            let diff =
-                exitPrice -
-                    previousSettled;
+            let diff: number;
 
             /*
-                =========================
-                SHORT REVERSE
-                =========================
-                */
+        =========================
+        SAME-DAY ENTRY + EXIT
+        =========================
+
+        If the position was created today and
+        exited today, there is no meaningful
+        overnight MTM from a previous settlement.
+
+        In this case, calculate PnL using:
+
+            LONG  => exitPrice - averagePrice
+            SHORT => averagePrice - exitPrice
+
+        instead of using previousSettledPrice.
+        */
+
+            const sameDay =
+                position.createdAt.toDateString() ===
+            trade.createdAt.toDateString();
+
+            if (sameDay) {
+
+                const averagePrice =
+                    Number(position.averagePrice);
+
+                diff =
+                    exitPrice -
+                averagePrice;
+
+            } else {
+
+                /*
+            =========================
+            NORMAL MTM EXIT
+            =========================
+
+            Position existed before today.
+
+            Calculate today's realized PnL
+            relative to yesterday's settlement.
+            */
+
+                diff =
+                    exitPrice -
+                previousSettled;
+
+            }
+
+            /*
+        =========================
+        SHORT REVERSE
+        =========================
+
+        Price increase benefits LONG positions
+        but hurts SHORT positions, so reverse
+        the sign for SHORTs.
+        */
 
             if (
                 position.positionType ===
-                    "SHORT"
+            "SHORT"
             ) {
                 diff *= -1;
             }
 
             const pnl =
                 diff *
-                    trade.quantity *
-                    position.lotSize;
+            trade.quantity *
+            position.lotSize;
 
             return {
                 ...position,
@@ -869,12 +995,12 @@ async function calculatePnLForUser(user: User) {
                 pnl,
 
                 exitedQuantity:
-                        trade.quantity,
+                trade.quantity,
 
                 exitPrice,
 
                 source:
-                        "EXIT"
+                "EXIT"
             };
         });
 
