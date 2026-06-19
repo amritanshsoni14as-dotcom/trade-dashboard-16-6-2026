@@ -279,6 +279,9 @@ export const trades = pgTable(
             precision: 15,
             scale: 2 
         }).notNull(),
+        entryDate: timestamp("entry_date", {
+            withTimezone: true
+        }),
 
         notes: text("notes").notNull().default(""),
 

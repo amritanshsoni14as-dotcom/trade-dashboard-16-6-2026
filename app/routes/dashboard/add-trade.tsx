@@ -357,6 +357,27 @@ export default function AddTradePage() {
                             </p>
                         )}
                     </div>
+                    {/* Entry Date */}
+                    <div className={styles.field}>
+                        <label>Entry Date (Optional)</label>
+
+                        <input
+                            type="date"
+                            name="entry_date"
+                            defaultValue={values.entry_date}
+                            className={
+                                errors.entryDate
+                                    ? styles.fieldError
+                                    : ""
+                            }
+                        />
+
+                        {errors.entryDate && (
+                            <p className={styles.error}>
+                                {errors.entryDate}
+                            </p>
+                        )}
+                    </div>
 
                     <button
                         type="submit"

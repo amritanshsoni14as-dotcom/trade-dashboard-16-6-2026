@@ -55,6 +55,7 @@ function parseTradeForm(formData: FormData): TradeFormData {
         quantity: Number(formData.get("quantity")),
 
         entryPrice: Number(formData.get("entry_price")),
+        entryDate: formData.get("entry_date")?.toString() || null,
 
         strikePrice:
       instrumentType === "OPTIONS"
@@ -267,6 +268,7 @@ export async function addTrade(request: Request, formData: any): Promise<ActionR
                 exchangeInstrumentId:
             instrument?.exchangeInstrumentId,
                 entryPrice: data.entryPrice.toFixed(2),
+                entryDate: data.entryDate,
                 averagePrice: data.entryPrice.toFixed(2),
                 currentPrice: data.entryPrice.toFixed(2)
             })

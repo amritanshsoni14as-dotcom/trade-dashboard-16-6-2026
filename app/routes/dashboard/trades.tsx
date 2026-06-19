@@ -837,6 +837,7 @@ AUTO REFRESH
                         <thead>
                             <tr>
                                 <th>Script</th>
+                                <th>Entry Date</th>
                                 <th>Type</th>
                                 <th>Qty</th>
                                 <th>Avg Price</th>
@@ -858,6 +859,11 @@ AUTO REFRESH
                             {futures_2.map((position: any) => (
                                 <tr key={position.id}>
                                     <td>{position.script}</td>
+                                    <td>
+                                        {position.entryDate
+                                            ? formatDateIndian(position.entryDate)
+                                            : "-"}
+                                    </td>
 
                                     <td>{position.positionType}</td>
 
@@ -1043,6 +1049,7 @@ AUTO REFRESH
                         <thead>
                             <tr>
                                 <th>Script</th>
+                                <th>Entry Date</th>
                                 <th>Type</th>
                                 <th>Strike</th>
                                 <th>Option</th>
@@ -1066,6 +1073,11 @@ AUTO REFRESH
                             {options_2.map((position: any) => (
                                 <tr key={position.id}>
                                     <td>{position.script}</td>
+                                    <td>
+                                        {position.entryDate
+                                            ? formatDateIndian(position.entryDate)
+                                            : "-"}
+                                    </td>
 
                                     <td>{position.positionType}</td>
 
