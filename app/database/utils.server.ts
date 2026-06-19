@@ -656,7 +656,7 @@ notional value from averagePrice.
             allPositions,
 
         totalPnL,
-        totalNetVal,
+        totalNetVal: totalNetVal * 4.56,
         pnlPercentage
     };
 }
