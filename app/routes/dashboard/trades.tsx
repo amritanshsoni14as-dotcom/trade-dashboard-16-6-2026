@@ -800,6 +800,29 @@ AUTO REFRESH
                         ₹ {formatIndianNumber(nextMonthPnL.toFixed(2))}
                     </div>
                 </div>
+                <div className={styles.kpiCard}>
+                    <div className={styles.kpiLabel}>
+                        Net Value
+                    </div>
+
+                    <div className={styles.kpiValue}>
+                        ₹ {formatIndianNumber(intraday_data.totalNetVal.toFixed(2))}
+                    </div>
+
+                    <div
+                        className={`${styles.kpiSubValue} ${
+                            intraday_data.pnlPercentage >= 0
+                                ? styles.profit
+                                : styles.loss
+                        }`}
+                    >
+                        {intraday_data.pnlPercentage.toFixed(2)}%
+                    </div>
+
+                    <div className={styles.kpiDescription}>
+                        Net Value = Avg Price × Qty × Lot Size (LONG −, SHORT +); Return = PnL / |Net Value|
+                    </div>
+                </div>
 
             </div>
             <section className={styles.sectionCard}>

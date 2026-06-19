@@ -122,13 +122,13 @@ BASE URLS
 */
 
 const LIVE_PRICE_URL =
-    "https://manika-mam-02-06-2026-one.vercel.app/api/live-price-update";
+    "https://trade-dashboard-16-6-2026.vercel.app/api/live-price-update";
 
 const DAILY_PNL_URL =
-    "https://manika-mam-02-06-2026-one.vercel.app/api/store-daily-pnl";
+    "https://trade-dashboard-16-6-2026.vercel.app/api/store-daily-pnl";
 
 const SETTLEMENT_URL =
-    "https://manika-mam-02-06-2026-one.vercel.app/api/api-settlement";
+    "https://trade-dashboard-16-6-2026.vercel.app/api/api-settlement";
 
 
 /*

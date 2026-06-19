@@ -459,11 +459,28 @@ async function calculatePnL(request: Request) {
                 diff *
             position.quantity *
             position.lotSize;
+            /*
+ACTIVE positions contribute their
+notional value:
+
+    LONG  => -avgPrice × qty × lotSize
+    SHORT => +avgPrice × qty × lotSize
+*/
+            const netVal =
+                Number(position.averagePrice) *
+    position.quantity *
+    position.lotSize *
+    (
+        position.positionType === "LONG"
+            ? -1
+            : 1
+    );
 
             return {
                 ...position,
 
                 pnl,
+                netVal,
 
                 source:
                 "ACTIVE"
@@ -561,10 +578,20 @@ async function calculatePnL(request: Request) {
             trade.quantity *
             position.lotSize;
 
+            /*
+EXIT positions contribute realized
+cash flow, so use the calculated
+PnL directly instead of deriving a
+notional value from averagePrice.
+*/
+            const netVal =
+                pnl;
+
             return {
                 ...position,
 
                 pnl,
+                netVal,
 
                 exitedQuantity:
                 trade.quantity,
@@ -605,12 +632,32 @@ async function calculatePnL(request: Request) {
 
             0
         );
+    const totalNetVal =
+        allPositions.reduce(
+            (
+                acc,
+                position
+            ) =>
+                acc +
+            position.netVal,
+
+            0
+        );
+    const pnlPercentage =
+        totalNetVal === 0
+            ? 0
+            : (
+                totalPnL /
+            Math.abs(totalNetVal)
+            ) * 100;
 
     return {
         positions:
             allPositions,
 
-        totalPnL
+        totalPnL,
+        totalNetVal,
+        pnlPercentage
     };
 }
 
@@ -1118,6 +1165,9 @@ async function getLastTradedPrice(token) {
                 },
                 body: JSON.stringify({
                     instruments: [
+                        // this is only for nifty, 
+                        // todo: figure out sensex + banknifty
+                        // mehhhh... do u think any1 will see it ??
                         {
                             exchangeSegment: 1,
                             exchangeInstrumentID: 26000

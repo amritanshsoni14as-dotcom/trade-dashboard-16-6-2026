@@ -150,6 +150,23 @@
 
     line-height: 1.1;
 }
+.kpiSubValue {
+    font-size: 1rem;
+
+    font-weight: 600;
+
+    margin-top: 0.35rem;
+}
+
+.kpiDescription {
+    font-size: 0.75rem;
+
+    color: #9097a4;
+
+    margin-top: 0.5rem;
+
+    line-height: 1.4;
+}
 
 /* PnL colors */
 
